@@ -78,6 +78,7 @@ const createWindow = async () => {
       nodeIntegration: true,
     },
   });
+  mainWindow.setIgnoreMouseEvents(true);
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
