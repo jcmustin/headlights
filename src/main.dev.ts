@@ -11,9 +11,19 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  Display,
+  ipcMain,
+  ipcRenderer,
+  screen,
+  shell,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
-import log from 'electron-log';
+import log, { create } from 'electron-log';
+import { getByDisplayValue } from '@testing-library/dom';
+import { electron } from 'process';
 import MenuBuilder from './menu';
 
 export default class AppUpdater {
@@ -24,19 +34,19 @@ export default class AppUpdater {
   }
 }
 
-let mainWindow: BrowserWindow | null = null;
+const windows: { [key: number]: BrowserWindow } = {};
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
 
-// if (
-//   process.env.NODE_ENV === 'development' ||
-//   process.env.DEBUG_PROD === 'true'
-// ) {
-//   require('electron-debug')();
-// }
+if (
+  process.env.NODE_ENV === 'development' ||
+  process.env.DEBUG_PROD === 'true'
+) {
+  // require('electron-debug')();
+}
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
@@ -51,14 +61,7 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
-const createWindow = async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    await installExtensions();
-  }
-
+const createWindow: (display: Display) => BrowserWindow = (display) => {
   const RESOURCES_PATH = app.isPackaged
     ? path.join(process.resourcesPath, 'assets')
     : path.join(__dirname, '../assets');
@@ -67,7 +70,9 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
-  mainWindow = new BrowserWindow({
+  let window: BrowserWindow | null = new BrowserWindow({
+    x: display.bounds.x,
+    y: display.bounds.y,
     show: false,
     alwaysOnTop: true,
     transparent: true,
@@ -78,35 +83,60 @@ const createWindow = async () => {
       nodeIntegration: true,
     },
   });
-  mainWindow.setIgnoreMouseEvents(true);
 
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  window.setIgnoreMouseEvents(true);
+
+  window.loadURL(`file://${__dirname}/index.html`);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
+  window.webContents.on('did-finish-load', () => {
+    if (!window) {
+      throw new Error('"window" is not defined');
     }
     if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
+      window.minimize();
     } else {
-      mainWindow.show();
-      mainWindow.focus();
+      window.show();
+      window.focus();
     }
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  window.on('closed', () => {
+    window = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
+  const menuBuilder = new MenuBuilder(window);
   menuBuilder.buildMenu();
 
   // Open urls in the user's browser
-  mainWindow.webContents.on('new-window', (event, url) => {
+  window.webContents.on('new-window', (event, url) => {
     event.preventDefault();
     shell.openExternal(url);
+  });
+
+  return window;
+};
+
+const createWindows = async () => {
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.DEBUG_PROD === 'true'
+  ) {
+    await installExtensions();
+  }
+
+  screen.getAllDisplays().forEach((display) => {
+    console.log(display.id);
+    windows[display.id] = createWindow(display);
+  });
+
+  screen.on('display-added', (_, newDisplay) => {
+    windows[newDisplay.id] = createWindow(newDisplay);
+  });
+
+  screen.on('display-removed', (_, oldDisplay) => {
+    delete windows[oldDisplay.id];
   });
 
   // Remove this if your app does not use auto updates
@@ -126,10 +156,10 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.whenReady().then(createWindow).catch(console.log);
+app.whenReady().then(createWindows).catch(console.log);
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow();
+  if (window === null) createWindows();
 });
