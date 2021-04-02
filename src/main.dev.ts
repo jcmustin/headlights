@@ -36,6 +36,14 @@ export default class AppUpdater {
 
 const windows: { [key: number]: BrowserWindow } = {};
 
+ipcMain.on('cue-start-task', (event, task) => {
+  event.reply('start-task', task);
+});
+
+ipcMain.on('cue-end-task', (event) => {
+  event.reply('end-task');
+});
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
