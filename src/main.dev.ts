@@ -16,6 +16,7 @@ import {
   BrowserWindow,
   Display,
   ipcMain,
+  Menu,
   screen,
   shell,
   Tray,
@@ -176,9 +177,20 @@ app.on('window-all-closed', () => {
   }
 });
 
+let tray;
+
 const createTray = () => {
   const iconPath = path.join(__dirname, '../assets/icons/16x16.png');
-  return new Tray(iconPath);
+  tray = new Tray(iconPath);
+  const menu = Menu.buildFromTemplate([
+    {
+      label: 'Exit',
+      click() {
+        app.quit();
+      },
+    },
+  ]);
+  tray.setContextMenu(menu);
 };
 
 app.whenReady().then(createWindows).then(createTray).catch(console.log);
