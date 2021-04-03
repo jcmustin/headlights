@@ -1,6 +1,7 @@
 import { ipcRenderer } from 'electron';
 import React, { ChangeEventHandler, useDebugValue, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import IpcMessages from '../../constants/ipcMessages';
 import States from '../../constants/states';
 import { DurationInput, NameInput, StartTaskButton, TaskView } from './styles';
 
@@ -15,17 +16,17 @@ const Task: () => JSX.Element = () => {
 
   const onDurationChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     const { value: newDuration } = event.target;
-    if (/^[0-9]*$/.test(newDuration)) {
+    if (/^[0-9]*\.?[0-9]*$/.test(newDuration)) {
       setDuration(newDuration);
     }
   };
 
-  ipcRenderer.on('start-task', (task) => {
+  ipcRenderer.on(IpcMessages.StartTask, () => {
     history.push(States.Timer);
   });
 
   const onStartTask = () => {
-    ipcRenderer.send('cue-start-task', { name, duration });
+    ipcRenderer.send(IpcMessages.CueStartTask, { name, duration });
   };
 
   return (
@@ -38,7 +39,7 @@ const Task: () => JSX.Element = () => {
       />
       <DurationInput
         type="text"
-        placeholder="task"
+        placeholder="duration"
         value={duration}
         onChange={onDurationChange}
       />

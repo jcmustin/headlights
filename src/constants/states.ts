@@ -1,6 +1,6 @@
 enum States {
-  Task = '/task',
-  Timer = '/',
+  Task = '/',
+  Timer = '/timer',
   Schedule = '/schedule',
 }
 

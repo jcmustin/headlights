@@ -23,6 +23,7 @@ import {
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import IpcMessages from './constants/ipcMessages';
 
 export default class AppUpdater {
   constructor() {
@@ -34,18 +35,18 @@ export default class AppUpdater {
 
 const windows: { [key: number]: BrowserWindow } = {};
 
-ipcMain.on('cue-start-task', (_, task) => {
+ipcMain.on(IpcMessages.CueStartTask, (_, task) => {
   Object.values(windows).forEach((window) => {
-    window.webContents.send('update-active-task', task);
+    window.webContents.send(IpcMessages.UpdateActiveTask, task);
     window.setIgnoreMouseEvents(true);
-    window.webContents.send('start-task');
+    window.webContents.send(IpcMessages.StartTask);
   });
 });
 
-ipcMain.on('cue-end-task', () => {
+ipcMain.on(IpcMessages.CueEndTask, () => {
   Object.values(windows).forEach((window) => {
     window.setIgnoreMouseEvents(false);
-    window.webContents.send('end-task');
+    window.webContents.send(IpcMessages.EndTask);
   });
 });
 
@@ -99,7 +100,6 @@ const createWindow: (display: Display) => BrowserWindow = (display) => {
   });
 
   window.setAlwaysOnTop(true, 'screen-saver');
-  window.setIgnoreMouseEvents(true);
   window.setSkipTaskbar(true);
 
   window.setResizable(true);
@@ -176,11 +176,9 @@ app.on('window-all-closed', () => {
   }
 });
 
-let tray: Tray | null = null;
-
 const createTray = () => {
   const iconPath = path.join(__dirname, '../assets/icons/16x16.png');
-  tray = new Tray(iconPath);
+  return new Tray(iconPath);
 };
 
 app.whenReady().then(createWindows).then(createTray).catch(console.log);
@@ -188,5 +186,5 @@ app.whenReady().then(createWindows).then(createTray).catch(console.log);
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (window === null) createWindows();
+  if (Object.keys(windows).length === 0) createWindows();
 });
