@@ -36,12 +36,18 @@ export default class AppUpdater {
 
 const windows: { [key: number]: BrowserWindow } = {};
 
-ipcMain.on('cue-start-task', (event, task) => {
-  event.reply('start-task', task);
+ipcMain.on('cue-start-task', (_, task) => {
+  Object.values(windows).forEach((window) => {
+    window.setIgnoreMouseEvents(true);
+    window.webContents.send('start-task', task);
+  });
 });
 
-ipcMain.on('cue-end-task', (event) => {
-  event.reply('end-task');
+ipcMain.on('cue-end-task', () => {
+  Object.values(windows).forEach((window) => {
+    window.setIgnoreMouseEvents(false);
+    window.webContents.send('end-task');
+  });
 });
 
 if (process.env.NODE_ENV === 'production') {
