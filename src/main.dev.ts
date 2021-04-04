@@ -15,6 +15,7 @@ import {
   app,
   BrowserWindow,
   Display,
+  globalShortcut,
   ipcMain,
   Menu,
   screen,
@@ -193,10 +194,31 @@ const createTray = () => {
   tray.setContextMenu(menu);
 };
 
-app.whenReady().then(createWindows).then(createTray).catch(console.log);
+const registerShortcuts = () => {
+  const ret = globalShortcut.register('CommandOrControl+Alt+Q', () => {
+    app.quit();
+  });
+
+  if (!ret) {
+    console.log('registration failed');
+  }
+
+  console.log(globalShortcut.isRegistered('CommandOrControl+Alt+Q'));
+};
+
+app
+  .whenReady()
+  .then(createWindows)
+  .then(createTray)
+  .then(registerShortcuts)
+  .catch(console.log);
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (Object.keys(windows).length === 0) createWindows();
+});
+
+app.on('will-quit', () => {
+  globalShortcut.unregister('CommandOrControl+Alt+Q');
 });
