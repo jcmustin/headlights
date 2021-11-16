@@ -24,5 +24,19 @@
     "test/**/__snapshots__": true,
     "yarn.lock": true,
     "*.{css,sass,scss}.d.ts": true
-  }
+  },
+  "workbench.colorCustomizations": {
+    "sash.hoverBorder": "#00aaaa",
+    "statusBar.background": "#007777",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#00aaaa",
+    "statusBarItem.remoteBackground": "#007777",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "tab.activeBorder": "#00aaaa",
+    "titleBar.activeBackground": "#007777",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#00777799",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#077"
 }
