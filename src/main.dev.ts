@@ -16,14 +16,12 @@ import {
   BrowserWindow,
   Display,
   ipcMain,
-  ipcRenderer,
   screen,
   shell,
+  Tray,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import log, { create } from 'electron-log';
-import { getByDisplayValue } from '@testing-library/dom';
-import { electron } from 'process';
+import log from 'electron-log';
 import MenuBuilder from './menu';
 
 export default class AppUpdater {
@@ -38,8 +36,9 @@ const windows: { [key: number]: BrowserWindow } = {};
 
 ipcMain.on('cue-start-task', (_, task) => {
   Object.values(windows).forEach((window) => {
+    window.webContents.send('update-active-task', task);
     window.setIgnoreMouseEvents(true);
-    window.webContents.send('start-task', task);
+    window.webContents.send('start-task');
   });
 });
 
@@ -101,6 +100,7 @@ const createWindow: (display: Display) => BrowserWindow = (display) => {
 
   window.setAlwaysOnTop(true, 'screen-saver');
   window.setIgnoreMouseEvents(true);
+  window.setSkipTaskbar(true);
 
   window.setResizable(true);
   window.setSize(display.size.width, display.size.height);
@@ -176,7 +176,14 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.whenReady().then(createWindows).catch(console.log);
+let tray: Tray | null = null;
+
+const createTray = () => {
+  const iconPath = path.join(__dirname, '../assets/icons/16x16.png');
+  tray = new Tray(iconPath);
+};
+
+app.whenReady().then(createWindows).then(createTray).catch(console.log);
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
