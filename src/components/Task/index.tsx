@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import React, { ChangeEventHandler, useDebugValue, useState } from 'react';
+import React, { ChangeEventHandler, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import IpcMessages from '../../constants/ipcMessages';
 import States from '../../constants/states';
@@ -9,6 +9,12 @@ const Task: () => JSX.Element = () => {
   const [name, setName] = useState('');
   const [duration, setDuration] = useState('');
   const history = useHistory();
+
+  useEffect(() => {
+    ipcRenderer.on(IpcMessages.StartTask, () => {
+      history.push(States.Timer);
+    });
+  }, []);
 
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     setName(event.target.value);
@@ -21,28 +27,14 @@ const Task: () => JSX.Element = () => {
     }
   };
 
-  ipcRenderer.on(IpcMessages.StartTask, () => {
-    history.push(States.Timer);
-  });
-
   const onStartTask = () => {
     ipcRenderer.send(IpcMessages.CueStartTask, { name, duration });
   };
 
   return (
     <TaskView>
-      <NameInput
-        type="text"
-        placeholder="task"
-        value={name}
-        onChange={onNameChange}
-      />
-      <DurationInput
-        type="text"
-        placeholder="duration"
-        value={duration}
-        onChange={onDurationChange}
-      />
+      <NameInput type="text" value={name} onChange={onNameChange} autoFocus />
+      <DurationInput type="text" value={duration} onChange={onDurationChange} />
       <StartTaskButton type="submit" onClick={onStartTask}>
         Start
       </StartTaskButton>

@@ -10,7 +10,7 @@ const Timer = ({ duration, name }: { duration: number; name: string }) => {
   const [progress, setProgress] = useState(0);
   const history = useHistory();
   useEffect(() => {
-    ipcRenderer.on(IpcMessages.EndTask, (_) => {
+    ipcRenderer.on(IpcMessages.EndTask, () => {
       history.push(States.Task);
     });
   }, [history]);
