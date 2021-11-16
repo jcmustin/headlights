@@ -88,17 +88,23 @@ const createWindow: (display: Display) => BrowserWindow = (display) => {
     x: display.bounds.x,
     y: display.bounds.y,
     show: false,
-    alwaysOnTop: true,
+    enableLargerThanScreen: true,
+    minimizable: false,
+    movable: false,
     transparent: true,
     frame: false,
-    fullscreen: true,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
     },
   });
 
+  window.setAlwaysOnTop(true, 'screen-saver');
   window.setIgnoreMouseEvents(true);
+
+  window.setResizable(true);
+  window.setSize(display.size.width, display.size.height);
+  window.setResizable(false);
 
   window.loadURL(`file://${__dirname}/index.html`);
 
