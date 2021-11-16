@@ -16,7 +16,7 @@ export const Progress = styled.progress`
 `;
 
 export const TaskTitle = styled.div`
-  font-family: 'League Gothic', Impact, sans-serif;
+  font-family: 'Roboto Slab', sans-serif;
   color: #ccc6;
   font-size: 6em;
   position: fixed;

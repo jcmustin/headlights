@@ -2,11 +2,13 @@ import styled from '@emotion/styled';
 
 export const TaskView = styled.div`
   position: fixed;
+  box-sizing: border-box;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: white;
+  padding: 10% 0;
+  background: #231830dd;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,8 +17,11 @@ export const TaskView = styled.div`
 
 const Input = styled.input`
   border: none;
+  outline: none;
+  border-radius: 0.25rem;
   background: #8883;
-  padding: 0.25em;
+  padding: 0.5em;
+  font-family: 'Roboto Slab', sans-serif;
   font-size: 3rem;
   display: block;
   color: white;
@@ -27,16 +32,20 @@ export const NameInput = styled(Input)`
 `;
 
 export const DurationInput = styled(Input)`
-  width: 5em;
+  text-align: center;
+  width: 1em;
 `;
 
 export const StartTaskButton = styled.button`
   font-size: 3rem;
-  width: 5em;
+  font-family: 'Roboto Slab', sans-serif;
+  text-shadow: 0px -1.5px 0px #0002;
+  box-shadow: 0px 3px 0px #0002;
+  padding: 1.5rem 3rem;
+  color: #0007;
   border: none;
-  background: #8882;
-  border-radius: none;
-  box-shadow: none;
+  background: #fff3;
+  border-radius: 0.25rem;
   &:hover {
     transform: none;
   }
