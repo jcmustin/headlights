@@ -11,13 +11,15 @@ export const Progress = styled.progress`
     background: transparent;
   }
   &::-webkit-progress-value {
-    background: #ccc6;
+    background: #aaa5;
   }
 `;
 
 export const TaskTitle = styled.div`
   font-family: 'Roboto Slab', sans-serif;
-  color: #ccc6;
+  font-weight: bolder;
+  text-align: center;
+  color: #aaa3;
   font-size: 6em;
   position: fixed;
   left: 50%;

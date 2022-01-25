@@ -33,8 +33,19 @@ const Task: () => JSX.Element = () => {
 
   return (
     <TaskView>
-      <NameInput type="text" value={name} onChange={onNameChange} autoFocus />
-      <DurationInput type="text" value={duration} onChange={onDurationChange} />
+      <NameInput
+        spellCheck={false}
+        type="text"
+        value={name}
+        onChange={onNameChange}
+        autoFocus
+      />
+      <DurationInput
+        spellCheck={false}
+        type="text"
+        value={duration}
+        onChange={onDurationChange}
+      />
       <StartTaskButton type="submit" onClick={onStartTask}>
         Start
       </StartTaskButton>
