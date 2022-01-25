@@ -36,9 +36,12 @@ const Input = styled.input`
     color: ${lighten(0.1, PRIMARY_COLOR)};
   }
   border: none;
-  border-bottom: 1px solid #fffd;
+  border-bottom: 4px solid ${SECONDARY_COLOR};
+  box-shadow: 0 2.3px 0 ${darken(0.1, SECONDARY_COLOR)}, 0 9px 2px -2px #0002;
+  border-radius: 2px;
   outline: none;
   background: transparent;
+  text-align: center;
   padding: 0.5em;
   font-family: 'Roboto Slab', sans-serif;
   font-size: 3rem;
