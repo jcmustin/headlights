@@ -98,6 +98,7 @@ const createWindow: (display: Display) => BrowserWindow = (display) => {
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
     },
   });
 
