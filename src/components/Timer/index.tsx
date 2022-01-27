@@ -3,11 +3,19 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import IpcMessages from '../../constants/ipcMessages';
 import States from '../../constants/states';
-import useInterval from '../../utils/useEffect';
+import useInterval from '../../utils/useInterval';
 import { Progress, TaskTitle } from './styles';
+import {
+  COOLDOWN_DURATION,
+  CSS_ANIMATION_CORRECTION_FACTOR,
+  TICKS_PER_SECOND,
+} from '../../constants/constants';
+import { TaskViewContainer } from '../shared/styles';
 
 const Timer = ({ duration, name }: { duration: number; name: string }) => {
-  const [progress, setProgress] = useState(0);
+  const [taskProgress, setProgress] = useState(0);
+  const [cooldownProgress, setCooldownProgress] = useState(0);
+
   const history = useHistory();
   useEffect(() => {
     ipcRenderer.on(IpcMessages.EndTask, () => {
@@ -16,16 +24,28 @@ const Timer = ({ duration, name }: { duration: number; name: string }) => {
   }, [history]);
 
   useInterval(() => {
-    setProgress(progress + 1);
-    if (progress >= duration * 60) {
-      ipcRenderer.send(IpcMessages.CueEndTask);
+    setProgress(Math.min(duration * TICKS_PER_SECOND, taskProgress + 1));
+    if (taskProgress >= duration * TICKS_PER_SECOND) {
+      setCooldownProgress(cooldownProgress + 1);
+      if (cooldownProgress >= COOLDOWN_DURATION * TICKS_PER_SECOND) {
+        ipcRenderer.send(IpcMessages.CueEndTask);
+      }
     }
-  }, 1000);
+  }, 1000 / TICKS_PER_SECOND);
 
   return (
     <div>
-      <Progress value={progress} max={duration * 60} />
+      <Progress
+        isComplete={cooldownProgress > 0}
+        value={taskProgress}
+        max={duration * TICKS_PER_SECOND}
+      />
       <TaskTitle>{name}</TaskTitle>
+      {cooldownProgress > 0 && (
+        <TaskViewContainer
+          fadeInDuration={COOLDOWN_DURATION * CSS_ANIMATION_CORRECTION_FACTOR}
+        />
+      )}
     </div>
   );
 };
