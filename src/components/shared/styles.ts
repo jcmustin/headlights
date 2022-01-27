@@ -12,7 +12,7 @@ const fadeInKeyframes = keyframes`
     opacity: .1;
   }
   90% {
-    opacity: .5;
+    opacity: .4;
   }
   100% {
     opacity: 1;
