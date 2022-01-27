@@ -3,9 +3,10 @@ import React, { ChangeEventHandler, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import IpcMessages from '../../constants/ipcMessages';
 import States from '../../constants/states';
-import { DurationInput, NameInput, StartTaskButton, TaskView } from './styles';
+import { Input, StartTaskButton, InputContainer } from './styles';
+import { TaskViewContainer } from '../shared/styles';
 
-const Task: () => JSX.Element = () => {
+const TaskView: () => JSX.Element = () => {
   const [name, setName] = useState('');
   const [duration, setDuration] = useState('');
   const history = useHistory();
@@ -28,29 +29,36 @@ const Task: () => JSX.Element = () => {
   };
 
   const onStartTask = () => {
-    ipcRenderer.send(IpcMessages.CueStartTask, { name, duration });
+    ipcRenderer.send(IpcMessages.CueStartTask, {
+      name,
+      duration: parseFloat(duration) * 60,
+    });
   };
 
   return (
-    <TaskView>
-      <NameInput
-        spellCheck={false}
-        type="text"
-        value={name}
-        onChange={onNameChange}
-        autoFocus
-      />
-      <DurationInput
-        spellCheck={false}
-        type="text"
-        value={duration}
-        onChange={onDurationChange}
-      />
+    <TaskViewContainer>
+      <InputContainer>
+        <Input
+          spellCheck={false}
+          type="text"
+          value={name}
+          onChange={onNameChange}
+          autoFocus
+        />
+      </InputContainer>
+      <InputContainer>
+        <Input
+          spellCheck={false}
+          type="text"
+          value={duration}
+          onChange={onDurationChange}
+        />
+      </InputContainer>
       <StartTaskButton type="submit" onClick={onStartTask}>
         Start
       </StartTaskButton>
-    </TaskView>
+    </TaskViewContainer>
   );
 };
 
-export default Task;
+export default TaskView;

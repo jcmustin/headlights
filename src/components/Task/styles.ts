@@ -1,73 +1,68 @@
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { lighten, darken, opacify } from 'polished';
-import milkyWay from '../../../assets/milky-way.jpg';
+import { lighten, darken } from 'polished';
+import {
+  FADE_IN_DURATION,
+  SECONDARY_COLOR,
+  SHADOW_STYLE,
+  UI_COLOR,
+} from '../../constants/constants';
 
-// const BASE_COLOR = `#d80d6c`;
-const BASE_COLOR = `#811c5c`;
-const PRIMARY_COLOR = BASE_COLOR;
-const SECONDARY_COLOR = lighten(0.63, BASE_COLOR);
-// const PRIMARY_COLOR = lighten(0.63, BASE_COLOR);
-// const SECONDARY_COLOR = lighten(.2, BASE_COLOR);
-
-export const TaskView = styled.div`
-  position: fixed;
-  box-sizing: border-box;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  padding: 10% 0;
-  background-image: linear-gradient(
-      ${opacify(-0.3, BASE_COLOR)},
-      ${opacify(-0.1, BASE_COLOR)}
-    ),
-    url(${milkyWay});
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
+const fadeInKeyframes = keyframes`
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 `;
 
-const Input = styled.input`
+export const InputContainer = styled.div`
+  animation: ${fadeInKeyframes} ease-out ${FADE_IN_DURATION}s;
+  ::after {
+    content: '';
+    width: 200px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-block;
+    position: absolute;
+    height: 4px;
+    background: ${UI_COLOR};
+    border-radius: 3px;
+    box-shadow: 0 2.3px 0 ${darken(0.1, UI_COLOR)}, ${SHADOW_STYLE};
+  }
+`;
+
+export const Input = styled.input`
+  animation: ${fadeInKeyframes} ease-out ${FADE_IN_DURATION}s;
   &::selection {
-    background: #fffffffe;
-    color: ${lighten(0.1, PRIMARY_COLOR)};
+    background: #fff7;
+    color: ${UI_COLOR};
   }
   border: none;
-  border-bottom: 4px solid ${SECONDARY_COLOR};
-  box-shadow: 0 2.3px 0 ${darken(0.1, SECONDARY_COLOR)}, 0 9px 2px -2px #0002;
   border-radius: 2px;
   outline: none;
   background: transparent;
   text-align: center;
-  padding: 0.5em;
   font-family: 'Roboto Slab', sans-serif;
   font-size: 3rem;
   display: block;
-  color: ${SECONDARY_COLOR};
-  text-shadow: 0px 1.4px 0px ${darken(0.18, SECONDARY_COLOR)}, 0px 5px 2px #0002;
-`;
-
-export const NameInput = styled(Input)`
-  width: 20em;
-`;
-
-export const DurationInput = styled(Input)`
-  text-align: center;
-  width: 3em;
+  color: ${UI_COLOR};
+  text-shadow: 0px 1.4px 0px ${darken(0.18, UI_COLOR)}, ${SHADOW_STYLE};
+  width: 100vw;
+  line-height: 2;
 `;
 
 export const StartTaskButton = styled.button`
+  animation: ${fadeInKeyframes} ease-out ${FADE_IN_DURATION}s;
   font-size: 3rem;
   font-family: 'Roboto Slab', sans-serif;
-  text-shadow: 0px -2px 0px #0002;
-  box-shadow: 0px 3px 0px ${darken(0.1, SECONDARY_COLOR)}, 0px 7px 3px #0002;
+  text-shadow: 0px -2px 0px ${lighten(0.4, SECONDARY_COLOR)};
+  box-shadow: 0px 3px 0px ${darken(0.1, UI_COLOR)}, ${SHADOW_STYLE};
   padding: 1.5rem 3rem;
-  color: ${lighten(0.1, PRIMARY_COLOR)};
+  color: ${lighten(0.1, SECONDARY_COLOR)};
   border: none;
-  background: ${SECONDARY_COLOR};
+  background: ${UI_COLOR};
   border-radius: 0.2rem;
   &:hover {
     transform: none;

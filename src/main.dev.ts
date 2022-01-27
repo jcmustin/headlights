@@ -26,6 +26,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import IpcMessages from './constants/ipcMessages';
+import Task from './types/Task';
 
 export default class AppUpdater {
   constructor() {
@@ -37,7 +38,7 @@ export default class AppUpdater {
 
 const windows: { [key: number]: BrowserWindow } = {};
 
-ipcMain.on(IpcMessages.CueStartTask, (_, task) => {
+ipcMain.on(IpcMessages.CueStartTask, (_, task: Task) => {
   Object.values(windows).forEach((window) => {
     window.webContents.send(IpcMessages.UpdateActiveTask, task);
     window.setIgnoreMouseEvents(true);
@@ -95,6 +96,7 @@ const createWindow: (display: Display) => BrowserWindow = (display) => {
     movable: false,
     transparent: true,
     frame: false,
+    roundedCorners: false,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,
