@@ -196,15 +196,27 @@ const createTray = () => {
 };
 
 const registerShortcuts = () => {
-  const ret = globalShortcut.register('CommandOrControl+Alt+Q', () => {
-    app.quit();
+  const shortcuts: { command: Electron.Accelerator; action: () => void }[] = [
+    {
+      command: 'CommandOrControl+Alt+Q',
+      action: () => {
+        app.quit();
+      },
+    },
+    {
+      command: 'CommandOrControl+Alt+T',
+      action: () => {
+        ipcMain.emit(IpcMessages.CueEndTask);
+      },
+    },
+  ];
+  shortcuts.forEach((task) => {
+    const ret = globalShortcut.register(task.command, task.action);
+    if (!ret) {
+      console.log('registration failed');
+    }
+    console.log(globalShortcut.isRegistered(task.command));
   });
-
-  if (!ret) {
-    console.log('registration failed');
-  }
-
-  console.log(globalShortcut.isRegistered('CommandOrControl+Alt+Q'));
 };
 
 app
