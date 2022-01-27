@@ -20,6 +20,7 @@ export const Progress = styled.progress<{ isComplete?: boolean }>`
 `;
 
 export const TaskTitle = styled.div`
+  width: fit-content;
   font-family: 'Roboto Slab', sans-serif;
   font-weight: bolder;
   text-align: center;

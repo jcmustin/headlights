@@ -34,7 +34,7 @@ const Timer = ({ duration, name }: { duration: number; name: string }) => {
   }, 1000 / TICKS_PER_SECOND);
 
   return (
-    <div>
+    <>
       <Progress
         isComplete={cooldownProgress > 0}
         value={taskProgress}
@@ -46,7 +46,7 @@ const Timer = ({ duration, name }: { duration: number; name: string }) => {
           fadeInDuration={COOLDOWN_DURATION * CSS_ANIMATION_CORRECTION_FACTOR}
         />
       )}
-    </div>
+    </>
   );
 };
 
