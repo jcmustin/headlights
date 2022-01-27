@@ -5,10 +5,16 @@ import { PRIMARY_COLOR } from '../../constants/constants';
 import milkyWay from '../../../assets/milky-way.jpg';
 
 const fadeInKeyframes = keyframes`
-  from {
+  0% {
     opacity: 0;
   }
-  to {
+  10% {
+    opacity: .1;
+  }
+  90% {
+    opacity: .5;
+  }
+  100% {
     opacity: 1;
   }
 `;
