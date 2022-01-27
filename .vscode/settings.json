@@ -6,9 +6,9 @@
     ".eslintignore": "ignore"
   },
 
-  "javascript.validate.enable": false,
-  "javascript.format.enable": false,
-  "typescript.format.enable": false,
+  "javascript.validate.enable": true,
+  "javascript.format.enable": true,
+  "typescript.format.enable": true,
 
   "search.exclude": {
     ".git": true,
@@ -39,5 +39,9 @@
     "titleBar.inactiveForeground": "#e7e7e799"
   },
   "peacock.color": "#077",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "javascript.format.semicolons": "remove",
+  "typescript.format.semicolons": "remove",
+  "eslint.enable": false
 }
