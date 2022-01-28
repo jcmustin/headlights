@@ -24,10 +24,10 @@ export const TaskTitle = styled.div`
   font-family: 'Roboto Slab', sans-serif;
   font-weight: bolder;
   text-align: center;
-  color: #fff8;
+  color: #fff7;
   text-shadow: 0px 2px 0px #0004;
   box-shadow: 0px 3px 0px #0003;
-  font-size: 5em;
+  font-size: 4em;
   position: fixed;
   left: 50%;
   background: #8883;
