@@ -7,9 +7,6 @@
   },
 
   "javascript.validate.enable": true,
-  "javascript.format.enable": true,
-  "typescript.format.enable": true,
-
   "search.exclude": {
     ".git": true,
     ".eslintcache": true,
@@ -43,5 +40,7 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "javascript.format.semicolons": "remove",
   "typescript.format.semicolons": "remove",
-  "eslint.enable": false
+  "eslint.enable": false,
+  "prettier.enable": true,
+  "prettier.configPath": ".prettierrc"
 }
