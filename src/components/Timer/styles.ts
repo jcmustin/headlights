@@ -7,7 +7,7 @@ export const Progress = styled.progress<{ isComplete?: boolean }>`
   left: 0;
   width: 100%;
   height: 5.1vh;
-  max-height: 120px;
+  max-height: 70px;
   border-radius: 0;
   &::-webkit-progress-bar {
     background: transparent;
@@ -24,13 +24,13 @@ export const TaskTitle = styled.div`
   font-family: 'Roboto Slab', sans-serif;
   font-weight: bolder;
   text-align: center;
-  color: #fff6;
-  text-shadow: 0px 3px 0px #0003;
+  color: #fff8;
+  text-shadow: 0px 2px 0px #0004;
   box-shadow: 0px 3px 0px #0003;
   font-size: 5em;
   position: fixed;
   left: 50%;
-  background: #fff2;
+  background: #8883;
   border-radius: 3px;
   border-top: none;
   top: 0;

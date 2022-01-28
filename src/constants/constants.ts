@@ -6,7 +6,7 @@ export const COOLDOWN_DURATION = 12;
 export const TICKS_PER_SECOND = 10;
 export const FADE_IN_DURATION = 1;
 // the following was needed to prevent the css animation from being too short, for unknown reasons
-export const CSS_ANIMATION_CORRECTION_FACTOR = 1.15;
+export const CSS_ANIMATION_CORRECTION_FACTOR = 1;
 
 /** styles */
 const BASE_COLOR = '#d80d6ccc';

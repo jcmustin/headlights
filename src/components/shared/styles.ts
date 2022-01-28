@@ -2,7 +2,7 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { opacify } from 'polished';
 import { PRIMARY_COLOR } from '../../constants/constants';
-import milkyWay from '../../../assets/milky-way.jpg';
+import milkyWay from '../../../assets/milky-way-3.jpg';
 
 const fadeInKeyframes = keyframes`
   0% {
@@ -30,10 +30,11 @@ export const TaskViewContainer = styled.div<{ fadeInDuration?: number }>`
   height: 100%;
   padding: 10% 0;
   background-image: linear-gradient(
-      ${opacify(-0.3, PRIMARY_COLOR)},
-      ${opacify(-0.1, PRIMARY_COLOR)}
+      ${opacify(-0.5, PRIMARY_COLOR)},
+      ${opacify(-0.0, PRIMARY_COLOR)}
     ),
     url(${milkyWay});
+  background-blend-mode: normal, normal;
   background-size: cover;
   background-position: center;
   display: flex;
