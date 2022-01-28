@@ -13,8 +13,10 @@ export const Progress = styled.progress<{ isComplete?: boolean }>`
     background: transparent;
   }
   &::-webkit-progress-value {
-    background: ${({ isComplete }) => (isComplete ? '#fffa' : PRIMARY_COLOR)};
-    transition: background-color 1s ease-in-out;
+    background: ${({ isComplete }) => (isComplete ? '#fffb' : PRIMARY_COLOR)};
+    box-shadow: ${({ isComplete }) =>
+      isComplete ? '0 0 5px 6px #fffb, inset 0 0 25px 6px #fff' : 'none'};
+    transition: background-color 0.2s, box-shadow 0.6s;
     animation-play-state: running;
   }
 `;
