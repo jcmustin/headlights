@@ -2,7 +2,7 @@ import { keyframes } from '@emotion/react';
 import { lighten } from 'polished';
 
 /** timing */
-export const COOLDOWN_DURATION = 12;
+export const COOLDOWN_DURATION = 10;
 export const TICKS_PER_SECOND = 10;
 export const FADE_IN_DURATION = 1;
 // the following was needed to prevent the css animation from being too short, for unknown reasons
