@@ -5,6 +5,7 @@ import IpcMessages from '../../constants/ipcMessages'
 import States from '../../constants/states'
 import { Input, StartTaskButton, InputContainer } from './styles'
 import { TaskViewContainer } from '../shared/styles'
+import * as Mousetrap from 'mousetrap'
 
 const TaskView: () => JSX.Element = () => {
   const [name, setName] = useState('')
@@ -15,7 +16,13 @@ const TaskView: () => JSX.Element = () => {
     ipcRenderer.on(IpcMessages.StartTask, () => {
       history.push(States.Timer)
     })
-  }, [])
+    Mousetrap.bind('mod+enter', () => {
+      onStartTask()
+    })
+    return () => {
+      Mousetrap.unbind('mod+enter')
+    }
+  }, [name, duration])
 
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     setName(event.target.value)
@@ -29,6 +36,7 @@ const TaskView: () => JSX.Element = () => {
   }
 
   const onStartTask = () => {
+    if (!name || !duration) return
     ipcRenderer.send(IpcMessages.CueStartTask, {
       name,
       duration: parseFloat(duration) * 60,
@@ -44,6 +52,7 @@ const TaskView: () => JSX.Element = () => {
           value={name}
           onChange={onNameChange}
           autoFocus
+          className="mousetrap"
         />
       </InputContainer>
       <InputContainer>
@@ -52,9 +61,14 @@ const TaskView: () => JSX.Element = () => {
           type="text"
           value={duration}
           onChange={onDurationChange}
+          className="mousetrap"
         />
       </InputContainer>
-      <StartTaskButton type="submit" onClick={onStartTask}>
+      <StartTaskButton
+        type="submit"
+        disabled={!name || !duration}
+        onClick={onStartTask}
+      >
         Start
       </StartTaskButton>
     </TaskViewContainer>
