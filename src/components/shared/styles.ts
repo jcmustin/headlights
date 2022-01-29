@@ -30,7 +30,7 @@ export const TaskViewContainer = styled.div<{ fadeInDuration?: number }>`
   height: 100%;
   padding: 5rem;
   background-image: linear-gradient(
-      ${opacify(-0.5, PRIMARY_COLOR)},
+      ${opacify(-0.55, PRIMARY_COLOR)},
       ${opacify(-0.1, PRIMARY_COLOR)}
     ),
     url(${milkyWay});

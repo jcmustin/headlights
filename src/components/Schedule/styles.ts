@@ -1,9 +1,9 @@
 import { css, keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
-import { lighten, darken, opacify } from 'polished'
+import { darken, opacify } from 'polished'
 import {
   FADE_IN_DURATION,
-  SECONDARY_COLOR,
+  FONT_STYLE,
   SHADOW_STYLE,
   UI_COLOR,
 } from '../../constants/constants'
@@ -19,12 +19,8 @@ const fadeInKeyframes = keyframes`
 
 const sharedStyles = css`
   line-height: 1.5;
-  font-family: 'Roboto Slab', sans-serif;
   font-size: 2rem;
-  color: ${opacify(-0.3, UI_COLOR)};
-  -webkit-text-stroke: 1px #fff;
-  text-shadow: 0px 1.4px 0px ${opacify(-0.3, darken(0.18, UI_COLOR))},
-    ${SHADOW_STYLE};
+  ${FONT_STYLE};
 `
 
 const textAreaStyles = css`
@@ -85,10 +81,8 @@ export const SaveScheduleButton = styled.button`
   transform: translate(50%, 50%);
   animation: ${fadeInKeyframes} ease-out ${FADE_IN_DURATION}s;
   font-size: 2.5rem;
-  font-family: 'Roboto Slab', sans-serif;
-  text-shadow: 0px -2px 0px ${lighten(0.4, SECONDARY_COLOR)};
+  ${FONT_STYLE};
   box-shadow: 0px 3px 0px ${darken(0.1, UI_COLOR)}, ${SHADOW_STYLE};
-  color: ${lighten(0.1, SECONDARY_COLOR)};
   border: none;
   background: ${UI_COLOR};
   border-radius: 50%;

@@ -1,12 +1,13 @@
-import { keyframes } from '@emotion/react';
-import styled from '@emotion/styled';
-import { lighten, darken } from 'polished';
+import { keyframes } from '@emotion/react'
+import styled from '@emotion/styled'
+import { lighten, darken } from 'polished'
 import {
   FADE_IN_DURATION,
+  FONT_STYLE,
   SECONDARY_COLOR,
   SHADOW_STYLE,
   UI_COLOR,
-} from '../../constants/constants';
+} from '../../constants/constants'
 
 const fadeInKeyframes = keyframes`
   0% {
@@ -15,7 +16,7 @@ const fadeInKeyframes = keyframes`
   100% {
     opacity: 1;
   }
-`;
+`
 
 export const InputContainer = styled.div`
   animation: ${fadeInKeyframes} ease-out ${FADE_IN_DURATION}s;
@@ -31,7 +32,7 @@ export const InputContainer = styled.div`
     border-radius: 3px;
     box-shadow: 0 2.3px 0 ${darken(0.1, UI_COLOR)}, ${SHADOW_STYLE};
   }
-`;
+`
 
 export const Input = styled.input`
   animation: ${fadeInKeyframes} ease-out ${FADE_IN_DURATION}s;
@@ -44,19 +45,17 @@ export const Input = styled.input`
   outline: none;
   background: transparent;
   text-align: center;
-  font-family: 'Roboto Slab', sans-serif;
+  ${FONT_STYLE};
   font-size: 3rem;
   display: block;
-  color: ${UI_COLOR};
-  text-shadow: 0px 1.4px 0px ${darken(0.18, UI_COLOR)}, ${SHADOW_STYLE};
   width: 100vw;
   line-height: 2;
-`;
+`
 
 export const StartTaskButton = styled.button`
   animation: ${fadeInKeyframes} ease-out ${FADE_IN_DURATION}s;
   font-size: 3rem;
-  font-family: 'Roboto Slab', sans-serif;
+  ${FONT_STYLE};
   text-shadow: 0px -2px 0px ${lighten(0.4, SECONDARY_COLOR)};
   box-shadow: 0px 3px 0px ${darken(0.1, UI_COLOR)}, ${SHADOW_STYLE};
   padding: 1.5rem 3rem;
@@ -69,4 +68,4 @@ export const StartTaskButton = styled.button`
   }
   user-select: none;
   outline: none;
-`;
+`

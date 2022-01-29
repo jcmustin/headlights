@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { PRIMARY_COLOR } from '../../constants/constants';
+import styled from '@emotion/styled'
+import { FONT_STYLE, PRIMARY_COLOR } from '../../constants/constants'
 
 export const Progress = styled.progress<{ isComplete?: boolean }>`
   position: fixed;
@@ -19,20 +19,19 @@ export const Progress = styled.progress<{ isComplete?: boolean }>`
     transition: background-color 0.2s, box-shadow 0.6s;
     animation-play-state: running;
   }
-`;
+`
 
 export const TaskTitle = styled.div`
   width: fit-content;
-  font-family: 'Roboto Slab', sans-serif;
   font-weight: bolder;
+  ${FONT_STYLE};
   text-align: center;
-  color: #fff7;
-  text-shadow: 0px 2px 0px #0004;
+  opacity: 0.7;
   box-shadow: 0px 3px 0px #0003;
   font-size: 4em;
   position: fixed;
   left: 50%;
-  background: #8883;
+  background: #8884;
   border-radius: 3px;
   border-top: none;
   top: 0;
@@ -41,4 +40,4 @@ export const TaskTitle = styled.div`
   &:hover: {
     background: #0000;
   }
-`;
+`
