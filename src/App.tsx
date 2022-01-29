@@ -11,6 +11,7 @@ import Task from './types/Task'
 
 export default function App() {
   const [activeTask, setActiveTask] = useState({ name: '', duration: 0 })
+  const [schedule, setSchedule] = useState('')
   useEffect(() => {
     ipcRenderer.on(IpcMessages.UpdateActiveTask, (_, task: Task) => {
       setActiveTask(task)
@@ -27,7 +28,7 @@ export default function App() {
           <TaskView />
         </Route>
         <Route path={States.Schedule}>
-          <ScheduleView />
+          <ScheduleView schedule={schedule} setSchedule={setSchedule} />
         </Route>
       </Switch>
     </Router>

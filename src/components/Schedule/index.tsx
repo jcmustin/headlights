@@ -24,8 +24,10 @@ const EPSILON = 10
 const MIN_TAB_SIZE = 40
 
 const ROUND = 150
-const ScheduleView: () => JSX.Element = () => {
-  const [schedule, setSchedule] = useState('')
+const ScheduleView: React.FC<{
+  schedule: string
+  setSchedule: (schedule: string) => void
+}> = ({ schedule, setSchedule }) => {
   const [width, setWidth] = useState(MIN_WIDTH)
   const [height, setHeight] = useState(MIN_HEIGHT)
   const [tabSize, setTabsize] = useState(MIN_TAB_SIZE)
@@ -94,7 +96,7 @@ const ScheduleView: () => JSX.Element = () => {
     })
   }
 
-  const onScroll: UIEventHandler<HTMLTextAreaElement> = (event) => {
+  const onScrollSchedule: UIEventHandler<HTMLTextAreaElement> = (event) => {
     window.requestAnimationFrame(() => {
       lineNumbers.current &&
         lineNumbers.current.scrollTo({
@@ -116,7 +118,7 @@ const ScheduleView: () => JSX.Element = () => {
     return schedule.split('\n').filter((task) => !/^\[x\]/.test(task))[0]
   }
 
-  const onUpdateSchedule = () => {
+  const onSaveSchedule = () => {
     // const { name, duration } = getNextTask()
     // ipcRenderer.send(IpcMessages.CueStartTask, { schedule, duration })
   }
@@ -129,7 +131,7 @@ const ScheduleView: () => JSX.Element = () => {
         ref={scheduleInput}
         placeholder="< task | duration >"
         onChange={onScheduleChange}
-        onScroll={onScroll}
+        onScroll={onScrollSchedule}
         value={schedule}
         widthInPx={width}
         heightInPx={height}
