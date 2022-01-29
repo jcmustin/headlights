@@ -11,14 +11,14 @@ export const CSS_ANIMATION_CORRECTION_FACTOR = 1
 /** styles */
 const BASE_COLOR = '#d80065'
 export const PRIMARY_COLOR = BASE_COLOR
-export const SECONDARY_COLOR = '#f08'
-export const UI_COLOR = lighten(0.55, SECONDARY_COLOR)
+export const SECONDARY_COLOR = '#fb0'
+export const UI_COLOR = lighten(0.55, PRIMARY_COLOR)
 
 export const SHADOW_STYLE = '0 5px 3px #0003'
 export const FONT_STYLE = css`
   font-family: 'Roboto Slab', sans-serif;
   color: ${opacify(-0.3, UI_COLOR)};
-  -webkit-text-stroke: 0px #fff;
+  -webkit-text-stroke: 1px #fff;
   text-shadow: 0px 2px 0px ${opacify(-0.3, darken(0.1, UI_COLOR))},
     ${SHADOW_STYLE};
 `

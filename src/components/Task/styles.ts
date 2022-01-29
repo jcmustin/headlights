@@ -1,10 +1,10 @@
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
-import { lighten, darken } from 'polished'
+import { lighten, darken, opacify } from 'polished'
 import {
   FADE_IN_DURATION,
   FONT_STYLE,
-  SECONDARY_COLOR,
+  PRIMARY_COLOR,
   SHADOW_STYLE,
   UI_COLOR,
 } from '../../constants/constants'
@@ -56,15 +56,25 @@ export const StartTaskButton = styled.button`
   animation: ${fadeInKeyframes} ease-out ${FADE_IN_DURATION}s;
   font-size: 3rem;
   ${FONT_STYLE};
-  text-shadow: 0px -2px 0px ${lighten(0.4, SECONDARY_COLOR)};
-  box-shadow: 0px 3px 0px ${darken(0.1, UI_COLOR)}, ${SHADOW_STYLE};
+  text-shadow: 0px -2px 0px ${lighten(0.4, UI_COLOR)};
+  -webkit-text-stroke: 0;
+  box-shadow: 0px 3px 0px ${opacify(-0.1, darken(0.1, UI_COLOR))},
+    ${SHADOW_STYLE};
   padding: 1.5rem 3rem;
-  color: ${lighten(0.1, SECONDARY_COLOR)};
+  color: ${lighten(0.15, PRIMARY_COLOR)};
   border: none;
   background: ${UI_COLOR};
   border-radius: 0.2rem;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
   &:hover {
-    transform: none;
+    transform: translateY(-0.2rem);
+    box-shadow: 0px 4px 0px ${opacify(-0.1, darken(0.1, UI_COLOR))},
+      0 8px 3px #0003;
+  }
+  &:active {
+    transform: translateY(0.1rem);
+    box-shadow: 0px 1.8px 0px ${opacify(-0.1, darken(0.1, UI_COLOR))},
+      0 4px 4px #0005;
   }
   user-select: none;
   outline: none;

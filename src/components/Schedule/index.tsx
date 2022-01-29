@@ -129,7 +129,7 @@ const ScheduleView: React.FC<{
         autoFocus
         spellCheck={false}
         ref={scheduleInput}
-        placeholder="< task | duration >"
+        placeholder="task | duration"
         onChange={onScheduleChange}
         onScroll={onScrollSchedule}
         value={schedule}
