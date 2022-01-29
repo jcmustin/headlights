@@ -1,20 +1,21 @@
-import { ipcRenderer } from 'electron';
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import './App.global.css';
-import TaskView from './components/Task';
-import TimerView from './components/Timer';
-import IpcMessages from './constants/ipcMessages';
-import States from './constants/states';
-import Task from './types/Task';
+import { ipcRenderer } from 'electron'
+import React, { useEffect, useState } from 'react'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import './App.global.css'
+import ScheduleView from './components/Schedule'
+import TaskView from './components/Task'
+import TimerView from './components/Timer'
+import IpcMessages from './constants/ipcMessages'
+import States from './constants/states'
+import Task from './types/Task'
 
 export default function App() {
-  const [activeTask, setActiveTask] = useState({ name: '', duration: 0 });
+  const [activeTask, setActiveTask] = useState({ name: '', duration: 0 })
   useEffect(() => {
     ipcRenderer.on(IpcMessages.UpdateActiveTask, (_, task: Task) => {
-      setActiveTask(task);
-    });
-  }, []);
+      setActiveTask(task)
+    })
+  }, [])
 
   return (
     <Router>
@@ -25,7 +26,10 @@ export default function App() {
         <Route path={States.Task}>
           <TaskView />
         </Route>
+        <Route path={States.Schedule}>
+          <ScheduleView />
+        </Route>
       </Switch>
     </Router>
-  );
+  )
 }
