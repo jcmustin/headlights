@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { opacify } from 'polished'
 import { FONT_STYLE, PRIMARY_COLOR } from '../../constants/constants'
 
 export const Progress = styled.progress<{ isComplete?: boolean }>`
@@ -13,7 +14,8 @@ export const Progress = styled.progress<{ isComplete?: boolean }>`
     background: transparent;
   }
   &::-webkit-progress-value {
-    background: ${({ isComplete }) => (isComplete ? '#fffb' : PRIMARY_COLOR)};
+    background: ${({ isComplete }) =>
+      opacify(-0.2, isComplete ? '#fff' : PRIMARY_COLOR)};
     box-shadow: ${({ isComplete }) =>
       isComplete ? '0 0 5px 6px #fffb, inset 0 0 25px 6px #fff' : 'none'};
     transition: background-color 0.2s, box-shadow 0.6s;
