@@ -15,6 +15,7 @@ import { TaskViewContainer } from '../shared/styles'
 import { ipcRenderer } from 'electron'
 import IpcMessages from '../../constants/ipcMessages'
 import Task from '../../types/Task'
+import Mousetrap from 'mousetrap'
 
 const MIN_WIDTH = 270
 const MIN_HEIGHT = 220
@@ -28,11 +29,13 @@ const MIN_TAB_SIZE = 40
 const ROUND = 150
 const ScheduleView: React.FC<{
   schedule: string
-  setSchedule: (schedule: string) => void
-}> = ({ schedule, setSchedule }) => {
+}> = ({ schedule: globalSchedule }) => {
   const [width, setWidth] = useState(MIN_WIDTH)
   const [height, setHeight] = useState(MIN_HEIGHT)
   const [tabSize, setTabsize] = useState(MIN_TAB_SIZE)
+  const [localSchedule, setLocalSchedule] = useState(globalSchedule)
+  const [isFocused, setIsFocused] = useState(false)
+  const schedule = isFocused ? localSchedule : globalSchedule
 
   const sizeReference = createRef<HTMLPreElement>()
   const spaceWidthReference = createRef<HTMLPreElement>()
@@ -51,17 +54,19 @@ const ScheduleView: React.FC<{
       ...schedule.split('\n').map((task): number => {
         const longestTaskName = (task.match(/([^\|]+)(?:\s\|.*)?/) || [
           '',
-          'a',
+          '',
         ])[1]
         return longestTaskName.length
       }),
     )
   useEffect(() => {
+    Mousetrap.bind('mod+enter', () => {
+      onSaveSchedule()
+    })
     const element = sizeReference.current
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0]
       const { width: newWidth, height: newHeight } = entry.contentRect
-      console.log(newWidth)
       const computedNewWidth = computeNewDim(newWidth, ROUND, 0, MIN_WIDTH)
       const computedNewHeight = computeNewDim(newHeight, ROUND, 0, MIN_WIDTH)
       if (width - computedNewWidth < EPSILON) {
@@ -72,7 +77,10 @@ const ScheduleView: React.FC<{
       }
     })
     element && observer.observe(element)
-  }, [sizeReference])
+    return () => {
+      Mousetrap.unbind('mod+enter')
+    }
+  }, [schedule, sizeReference])
 
   const onScheduleChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     const newSchedule = event.target.value
@@ -85,7 +93,8 @@ const ScheduleView: React.FC<{
       .join('\n')
     const caret = event.target.selectionStart
     const maxTaskLength = longestTaskNameLength(newSchedule)
-    setSchedule(newSchedule)
+    ipcRenderer.send(IpcMessages.CueSetSchedule, newSchedule)
+    setLocalSchedule(newSchedule)
     if (maxTaskLength > tabSize / 2 || maxTaskLength < tabSize / 2 - 10) {
       setTabsize(Math.max(maxTaskLength * 2 + 10, MIN_TAB_SIZE))
     }
@@ -93,6 +102,15 @@ const ScheduleView: React.FC<{
       event.target.selectionStart = caret
       event.target.selectionEnd = caret
     })
+  }
+
+  const onBlur = () => {
+    ipcRenderer.send(IpcMessages.CueSetSchedule, localSchedule)
+    setIsFocused(false)
+  }
+  const onFocus = () => {
+    setLocalSchedule(globalSchedule)
+    setIsFocused(true)
   }
 
   const onScrollSchedule: UIEventHandler<HTMLTextAreaElement> = (event) => {
@@ -113,14 +131,23 @@ const ScheduleView: React.FC<{
     })
   }
 
-  const getNextTask = () => {
-    return schedule.split('\n').filter((task) => !/^\[x\]/.test(task))[0]
+  const getNextTask = (): Task => {
+    const tasks = schedule
+      .split('\n')
+      .filter((task: string) => !/^\[x\]/.test(task))
+      .map((task: string) => task.match(/^([^\|]+)\s\|\s(\d*\.?\d+)/))
+      .filter((match: RegExpMatchArray | null) => match?.length === 3)
+      // @ts-ignore - the above line removes null cases, but TypeScript doesn't pick it up.
+      .map((match: RegExpMatchArray) => ({
+        name: match[1],
+        duration: parseFloat(match[2]),
+      }))
+    return tasks.length ? tasks[0] : { name: '', duration: 0 }
   }
 
   const onSaveSchedule = () => {
-    const { name, duration } = getNextTask()
-    ipcRenderer.send(IpcMessages.CueSetSchedule, schedule)
-    ipcRenderer.send(IpcMessages.SetActiveTask, { name, duration })
+    ipcRenderer.send(IpcMessages.CueSetActiveTask, getNextTask())
+    ipcRenderer.send(IpcMessages.SaveSchedule)
   }
 
   return (
@@ -132,11 +159,14 @@ const ScheduleView: React.FC<{
         placeholder="task | duration"
         onChange={onScheduleChange}
         onScroll={onScrollSchedule}
+        onFocus={onFocus}
+        onBlur={onBlur}
         value={schedule}
         widthInPx={width}
         heightInPx={height}
         tabSize={tabSize}
         maxHeight={MAX_HEIGHT}
+        className="mousetrap"
       />
       {/* the added space on the following line prevents the pre tag from discarding the last line break. */}
       <LineNumbers

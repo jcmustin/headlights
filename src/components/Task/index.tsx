@@ -3,15 +3,25 @@ import React, { ChangeEventHandler, useEffect, useState } from 'react'
 import IpcMessages from '../../constants/ipcMessages'
 import { Input, StartTaskButton, InputContainer } from './styles'
 import { TaskViewContainer } from '../shared/styles'
-import * as Mousetrap from 'mousetrap'
+import Mousetrap from 'mousetrap'
+import View from '../../constants/view'
 
-const TaskView: () => JSX.Element = () => {
-  const [name, setName] = useState('')
-  const [duration, setDuration] = useState('')
+const TaskView: React.FC<{
+  name: string
+  duration: number
+}> = ({ duration: activeTaskDuration, name: activeTaskName = '' }) => {
+  const [name, setName] = useState(activeTaskName)
+  const [duration, setDuration] = useState(
+    activeTaskDuration ? activeTaskDuration.toString() : '',
+  )
 
   useEffect(() => {
     Mousetrap.bind('mod+enter', () => {
       onStartTask()
+    })
+    Mousetrap.bind('alt+s', (e) => {
+      e.preventDefault()
+      ipcRenderer.send(IpcMessages.CueSetView, View.Schedule)
     })
     return () => {
       Mousetrap.unbind('mod+enter')

@@ -28,6 +28,8 @@ import MenuBuilder from './menu'
 import IpcMessages from './constants/ipcMessages'
 import Task from './types/Task'
 import View from './constants/view'
+import { refresh } from 'electron-debug'
+import Main from 'electron/main'
 
 export default class AppUpdater {
   constructor() {
@@ -46,6 +48,10 @@ const setView = (view: View) => {
   })
 }
 
+ipcMain.on(IpcMessages.CueSetView, (_, view: View) => {
+  setView(view)
+})
+
 ipcMain.on(IpcMessages.StartTask, (_, task: Task) => {
   Object.values(windows).forEach((window) => {
     window.webContents.send(IpcMessages.SetActiveTask, task)
@@ -53,14 +59,24 @@ ipcMain.on(IpcMessages.StartTask, (_, task: Task) => {
   setView(View.Timer)
 })
 
+ipcMain.on(IpcMessages.CueSetActiveTask, (_, task: Task) => {
+  Object.values(windows).forEach((window) => {
+    window.webContents.send(IpcMessages.SetActiveTask, task)
+  })
+})
+
 ipcMain.on(IpcMessages.EndTask, () => {
   setView(View.Task)
 })
 
-ipcMain.on(IpcMessages.CueSetSchedule, () => {
+ipcMain.on(IpcMessages.CueSetSchedule, (_, schedule: string) => {
   Object.values(windows).forEach((window) => {
-    window.webContents.send(IpcMessages.SetSchedule)
+    window.webContents.send(IpcMessages.SetSchedule, schedule)
   })
+})
+
+ipcMain.on(IpcMessages.SaveSchedule, (_, schedule: string) => {
+  setView(View.Task)
 })
 
 if (process.env.NODE_ENV === 'production') {
@@ -219,6 +235,12 @@ const registerShortcuts = () => {
       command: 'CommandOrControl+Alt+T',
       action: () => {
         ipcMain.emit(IpcMessages.EndTask)
+      },
+    },
+    {
+      command: 'CommandOrControl+Alt+R',
+      action: () => {
+        Object.values(windows).forEach((window) => refresh(window))
       },
     },
   ]

@@ -20,22 +20,20 @@ export default function App() {
       setSchedule(schedule)
     })
     ipcRenderer.on(IpcMessages.SetView, (_, view: View) => {
-      if (currentView !== view) {
-        setCurrentView(view)
-      }
+      setCurrentView(view)
     })
   }, [])
 
   switch (currentView) {
     case View.Task:
     default:
-      return <TaskView />
+      return <TaskView duration={activeTask.duration} name={activeTask.name} />
       break
     case View.Timer:
       return <TimerView duration={activeTask.duration} name={activeTask.name} />
       break
     case View.Schedule:
-      return <ScheduleView schedule={schedule} setSchedule={setSchedule} />
+      return <ScheduleView schedule={schedule} />
       break
   }
 }
