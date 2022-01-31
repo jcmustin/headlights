@@ -5,7 +5,6 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import { useHistory } from 'react-router-dom'
 import {
   ScheduleInput,
   SizeReference,
@@ -13,6 +12,9 @@ import {
   LineNumbers,
 } from './styles'
 import { TaskViewContainer } from '../shared/styles'
+import { ipcRenderer } from 'electron'
+import IpcMessages from '../../constants/ipcMessages'
+import Task from '../../types/Task'
 
 const MIN_WIDTH = 270
 const MIN_HEIGHT = 220
@@ -55,9 +57,6 @@ const ScheduleView: React.FC<{
       }),
     )
   useEffect(() => {
-    // ipcRenderer.on(IpcMessages.UpdateSchedule, () => {
-    //   history.push(States.Task)
-    // })
     const element = sizeReference.current
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0]
@@ -119,8 +118,9 @@ const ScheduleView: React.FC<{
   }
 
   const onSaveSchedule = () => {
-    // const { name, duration } = getNextTask()
-    // ipcRenderer.send(IpcMessages.CueStartTask, { schedule, duration })
+    const { name, duration } = getNextTask()
+    ipcRenderer.send(IpcMessages.CueSetSchedule, schedule)
+    ipcRenderer.send(IpcMessages.SetActiveTask, { name, duration })
   }
 
   return (
@@ -155,7 +155,7 @@ const ScheduleView: React.FC<{
         {schedule}{' '}
       </SizeReference>
       <SizeReference ref={spaceWidthReference}> </SizeReference>
-      <SaveScheduleButton></SaveScheduleButton>
+      <SaveScheduleButton onClick={onSaveSchedule}></SaveScheduleButton>
     </TaskViewContainer>
   )
 }

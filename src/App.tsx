@@ -1,36 +1,41 @@
 import { ipcRenderer } from 'electron'
 import React, { useEffect, useState } from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import './App.global.css'
 import ScheduleView from './components/Schedule'
 import TaskView from './components/Task'
 import TimerView from './components/Timer'
 import IpcMessages from './constants/ipcMessages'
-import States from './constants/states'
+import View from './constants/view'
 import Task from './types/Task'
 
 export default function App() {
-  const [activeTask, setActiveTask] = useState({ name: '', duration: 0 })
+  const [activeTask, setActiveTask] = useState<Task>({ name: '', duration: 0 })
   const [schedule, setSchedule] = useState('')
+  const [currentView, setCurrentView] = useState<View>(View.Task)
   useEffect(() => {
-    ipcRenderer.on(IpcMessages.UpdateActiveTask, (_, task: Task) => {
+    ipcRenderer.on(IpcMessages.SetActiveTask, (_, task: Task) => {
       setActiveTask(task)
+    })
+    ipcRenderer.on(IpcMessages.SetSchedule, (_, schedule: string) => {
+      setSchedule(schedule)
+    })
+    ipcRenderer.on(IpcMessages.SetView, (_, view: View) => {
+      if (currentView !== view) {
+        setCurrentView(view)
+      }
     })
   }, [])
 
-  return (
-    <Router>
-      <Switch>
-        <Route path={States.Timer}>
-          <TimerView duration={activeTask.duration} name={activeTask.name} />
-        </Route>
-        <Route path={States.Task}>
-          <TaskView />
-        </Route>
-        <Route path={States.Schedule}>
-          <ScheduleView schedule={schedule} setSchedule={setSchedule} />
-        </Route>
-      </Switch>
-    </Router>
-  )
+  switch (currentView) {
+    case View.Task:
+    default:
+      return <TaskView />
+      break
+    case View.Timer:
+      return <TimerView duration={activeTask.duration} name={activeTask.name} />
+      break
+    case View.Schedule:
+      return <ScheduleView schedule={schedule} setSchedule={setSchedule} />
+      break
+  }
 }

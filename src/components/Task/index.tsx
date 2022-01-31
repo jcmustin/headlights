@@ -1,8 +1,6 @@
 import { ipcRenderer } from 'electron'
 import React, { ChangeEventHandler, useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
 import IpcMessages from '../../constants/ipcMessages'
-import States from '../../constants/states'
 import { Input, StartTaskButton, InputContainer } from './styles'
 import { TaskViewContainer } from '../shared/styles'
 import * as Mousetrap from 'mousetrap'
@@ -10,12 +8,8 @@ import * as Mousetrap from 'mousetrap'
 const TaskView: () => JSX.Element = () => {
   const [name, setName] = useState('')
   const [duration, setDuration] = useState('')
-  const history = useHistory()
 
   useEffect(() => {
-    ipcRenderer.on(IpcMessages.StartTask, () => {
-      history.push(States.Timer)
-    })
     Mousetrap.bind('mod+enter', () => {
       onStartTask()
     })
@@ -37,7 +31,7 @@ const TaskView: () => JSX.Element = () => {
 
   const onStartTask = () => {
     if (!name || !duration) return
-    ipcRenderer.send(IpcMessages.CueStartTask, {
+    ipcRenderer.send(IpcMessages.StartTask, {
       name,
       duration: parseFloat(duration) * 60,
     })

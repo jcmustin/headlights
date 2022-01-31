@@ -1,9 +1,12 @@
 enum IpcMessages {
-  CueStartTask = 'cue-start-task',
   StartTask = 'start-task',
-  CueEndTask = 'cue-end-task',
   EndTask = 'end-task',
-  UpdateActiveTask = 'update-active-task',
+  SetActiveTask = 'update-active-task',
+  CueSetSchedule = 'cue-set-schedule',
+  SetSchedule = 'set-schedule',
+  CueSaveSchedule = 'cue-save-schedule',
+  SaveSchedule = 'save-schedule',
+  SetView = 'set-view',
 }
 
-export default IpcMessages;
+export default IpcMessages

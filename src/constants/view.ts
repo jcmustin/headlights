@@ -1,7 +1,7 @@
-enum States {
+enum View {
   Task = '/',
   Timer = '/timer',
   Schedule = '/schedule',
 }
 
-export default States;
+export default View
