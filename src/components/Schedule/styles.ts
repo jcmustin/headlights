@@ -47,6 +47,12 @@ const textAreaStyles = css`
   }
 `
 
+const placeholderStyles = css`
+  -webkit-text-stroke: 1px #fff7;
+  color: ${opacify(-0.7, UI_COLOR)};
+  text-shadow: 0px 1.4px 0px ${opacify(-0.6, darken(0.4, UI_COLOR))};
+`
+
 export const SizeReference = styled.pre<{ tabSize?: number }>`
   ${sharedStyles};
   display: inline-block;
@@ -66,9 +72,7 @@ export const ScheduleInput = styled.textarea<{
   height: ${(props) => props.heightInPx}px;
   max-height: ${({ maxHeight }) => maxHeight}px;
   &::placeholder {
-    -webkit-text-stroke: 1px #fff7;
-    color: ${opacify(-0.7, UI_COLOR)};
-    text-shadow: 0px 1.4px 0px ${opacify(-0.6, darken(0.4, UI_COLOR))};
+    ${placeholderStyles};
   }
 `
 
@@ -97,8 +101,10 @@ export const LineNumbers = styled.textarea<{
   widthInPx: number
   heightInPx: number
   maxHeight: number
+  scheduleEmpty: boolean
 }>`
   ${textAreaStyles};
+  ${({ scheduleEmpty }) => scheduleEmpty && placeholderStyles};
   user-select: none;
   transform: translateX(calc(-50% - 220px));
   transition: width 0.2s, height 0.2s;

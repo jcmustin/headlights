@@ -22,14 +22,20 @@ import {
   shell,
   Tray,
 } from 'electron'
-import { autoUpdater } from 'electron-updater'
+import { refresh } from 'electron-debug'
 import log from 'electron-log'
+import { autoUpdater } from 'electron-updater'
+import fs from 'fs'
+
 import MenuBuilder from './menu'
 import IpcMessages from './constants/ipcMessages'
-import Task from './types/Task'
 import View from './constants/view'
-import { refresh } from 'electron-debug'
-import Main from 'electron/main'
+import { createSchedule, Schedule } from './models/Schedule'
+import { createTask, Task, TaskData } from './models/Task'
+import { createAppState } from './AppState'
+import { Status } from './constants/status'
+
+const DATA_FILE_PATH = `../log/${new Date().toISOString().slice(0, 10)}.txt`
 
 export default class AppUpdater {
   constructor() {
@@ -41,41 +47,63 @@ export default class AppUpdater {
 
 const windows: { [key: number]: BrowserWindow } = {}
 
-const setView = (view: View) => {
-  Object.values(windows).forEach((window) => {
+const setView = async (view: View) => {
+  Object.values(windows).map((window) => {
     window.setIgnoreMouseEvents(view === View.Timer)
     window.webContents.send(IpcMessages.SetView, view)
   })
 }
 
+// let rawSchedule: string = fs.existsSync(DATA_FILE_PATH)
+//   ? fs.readFileSync(DATA_FILE_PATH).toString()
+//   : ''
+
+const appState = createAppState()
+
 ipcMain.on(IpcMessages.CueSetView, (_, view: View) => {
   setView(view)
 })
 
-ipcMain.on(IpcMessages.StartTask, (_, task: Task) => {
+ipcMain.on(IpcMessages.StartTask, (_, taskData: TaskData) => {
+  console.log('beforeSaveTask', appState.schedule.toString())
+  appState.schedule.insertBeforeActive(createTask(taskData))
+  console.log('afterSaveTask', appState.schedule.toString())
   Object.values(windows).forEach((window) => {
-    window.webContents.send(IpcMessages.SetActiveTask, task)
+    window.webContents.send(IpcMessages.SetActiveTask, taskData)
   })
   setView(View.Timer)
 })
 
-ipcMain.on(IpcMessages.CueSetActiveTask, (_, task: Task) => {
-  Object.values(windows).forEach((window) => {
-    window.webContents.send(IpcMessages.SetActiveTask, task)
-  })
-})
-
 ipcMain.on(IpcMessages.EndTask, () => {
+  const activeTask = appState.schedule.getActiveTask()
+  if (activeTask) {
+    activeTask.status = Status.Successful
+    Object.values(windows).forEach((window) => {
+      window.webContents.send(
+        IpcMessages.SetSchedule,
+        appState.schedule.toString(),
+      )
+    })
+  }
   setView(View.Task)
 })
 
-ipcMain.on(IpcMessages.CueSetSchedule, (_, schedule: string) => {
+ipcMain.on(IpcMessages.CueSetSchedule, (_, rawSchedule: string) => {
   Object.values(windows).forEach((window) => {
-    window.webContents.send(IpcMessages.SetSchedule, schedule)
+    window.webContents.send(IpcMessages.SetSchedule, rawSchedule)
   })
 })
 
-ipcMain.on(IpcMessages.SaveSchedule, (_, schedule: string) => {
+ipcMain.on(IpcMessages.SaveSchedule, async (_, rawSchedule: string) => {
+  console.log('beforeUpdateSchedule', appState.schedule.toString())
+  appState.updateSchedule(rawSchedule)
+  console.log('afterUpdateSchedule', appState.schedule.toString())
+  Object.values(windows).forEach((window) => {
+    window.webContents.send(
+      IpcMessages.SetActiveTask,
+      appState.activeTask?.serialize(),
+    )
+  })
   setView(View.Task)
 })
 
@@ -199,12 +227,19 @@ const createWindows = async () => {
  * Add event listeners...
  */
 
-app.on('window-all-closed', () => {
+app.once('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   if (process.platform !== 'darwin') {
     app.quit()
   }
+})
+
+app.once('before-quit', () => {
+  if (!fs.existsSync(DATA_FILE_PATH)) {
+    fs.writeFileSync(DATA_FILE_PATH, `${appState.schedule}\n`)
+  }
+  fs.appendFileSync(DATA_FILE_PATH, `${appState.schedule}\n`)
 })
 
 let tray

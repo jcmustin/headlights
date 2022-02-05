@@ -14,7 +14,6 @@ import {
 import { TaskViewContainer } from '../shared/styles'
 import { ipcRenderer } from 'electron'
 import IpcMessages from '../../constants/ipcMessages'
-import Task from '../../types/Task'
 import Mousetrap from 'mousetrap'
 
 const MIN_WIDTH = 270
@@ -60,7 +59,8 @@ const ScheduleView: React.FC<{
       }),
     )
   useEffect(() => {
-    Mousetrap.bind('mod+enter', () => {
+    Mousetrap.bind(['mod+enter', 'alt+s'], (e) => {
+      e.preventDefault()
       onSaveSchedule()
     })
     const element = sizeReference.current
@@ -131,23 +131,8 @@ const ScheduleView: React.FC<{
     })
   }
 
-  const getNextTask = (): Task => {
-    const tasks = schedule
-      .split('\n')
-      .filter((task: string) => !/^\[x\]/.test(task))
-      .map((task: string) => task.match(/^([^\|]+)\s\|\s(\d*\.?\d+)/))
-      .filter((match: RegExpMatchArray | null) => match?.length === 3)
-      // @ts-ignore - the above line removes null cases, but TypeScript doesn't pick it up.
-      .map((match: RegExpMatchArray) => ({
-        name: match[1],
-        duration: parseFloat(match[2]),
-      }))
-    return tasks.length ? tasks[0] : { name: '', duration: 0 }
-  }
-
   const onSaveSchedule = () => {
-    ipcRenderer.send(IpcMessages.CueSetActiveTask, getNextTask())
-    ipcRenderer.send(IpcMessages.SaveSchedule)
+    ipcRenderer.send(IpcMessages.SaveSchedule, schedule)
   }
 
   return (
@@ -174,6 +159,7 @@ const ScheduleView: React.FC<{
         heightInPx={height}
         ref={lineNumbers}
         maxHeight={MAX_HEIGHT}
+        scheduleEmpty={schedule.length === 0}
         value={schedule
           .split('\n')
           .map((_, i) => `${i + 1}. `)

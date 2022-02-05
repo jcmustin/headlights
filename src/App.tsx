@@ -5,19 +5,21 @@ import ScheduleView from './components/Schedule'
 import TaskView from './components/Task'
 import TimerView from './components/Timer'
 import IpcMessages from './constants/ipcMessages'
+import { isStatus, Status } from './constants/status'
 import View from './constants/view'
-import Task from './types/Task'
+import { createTask, Task, TaskData } from './models/Task'
 
 export default function App() {
-  const [activeTask, setActiveTask] = useState<Task>({ name: '', duration: 0 })
+  const [activeTask, setActiveTask] = useState<Task>(createTask())
   const [schedule, setSchedule] = useState('')
   const [currentView, setCurrentView] = useState<View>(View.Task)
   useEffect(() => {
-    ipcRenderer.on(IpcMessages.SetActiveTask, (_, task: Task) => {
-      setActiveTask(task)
+    ipcRenderer.on(IpcMessages.SetActiveTask, (_, taskData: TaskData) => {
+      setActiveTask(createTask(taskData))
+      console.log('x' in Status)
     })
-    ipcRenderer.on(IpcMessages.SetSchedule, (_, schedule: string) => {
-      setSchedule(schedule)
+    ipcRenderer.on(IpcMessages.SetSchedule, (_, rawSchedule: string) => {
+      setSchedule(rawSchedule)
     })
     ipcRenderer.on(IpcMessages.SetView, (_, view: View) => {
       setCurrentView(view)
@@ -28,12 +30,9 @@ export default function App() {
     case View.Task:
     default:
       return <TaskView duration={activeTask.duration} name={activeTask.name} />
-      break
     case View.Timer:
       return <TimerView duration={activeTask.duration} name={activeTask.name} />
-      break
     case View.Schedule:
       return <ScheduleView schedule={schedule} />
-      break
   }
 }

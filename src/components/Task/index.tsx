@@ -5,6 +5,8 @@ import { Input, StartTaskButton, InputContainer } from './styles'
 import { TaskViewContainer } from '../shared/styles'
 import Mousetrap from 'mousetrap'
 import View from '../../constants/view'
+import { createTask } from '../../models/Task'
+import { Status } from '../../constants/status'
 
 const TaskView: React.FC<{
   name: string
@@ -40,10 +42,10 @@ const TaskView: React.FC<{
   }
 
   const onStartTask = () => {
-    if (!name || !duration) return
+    if (!name.length || !duration) return
     ipcRenderer.send(IpcMessages.StartTask, {
       name,
-      duration: parseFloat(duration) * 60,
+      duration,
     })
   }
 

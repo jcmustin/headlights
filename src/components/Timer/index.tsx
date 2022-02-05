@@ -15,10 +15,10 @@ const Timer = ({ duration, name }: { duration: number; name: string }) => {
   const [cooldownProgress, setCooldownProgress] = useState(0)
 
   useInterval(() => {
-    setProgress(Math.min(duration * TICKS_PER_SECOND, taskProgress + 1))
-    if (taskProgress >= duration * TICKS_PER_SECOND) {
+    setProgress(Math.min(duration * TICKS_PER_SECOND * 60, taskProgress + 1))
+    if (taskProgress >= duration * TICKS_PER_SECOND * 60) {
       setCooldownProgress(cooldownProgress + 1)
-      if (cooldownProgress >= COOLDOWN_DURATION * TICKS_PER_SECOND) {
+      if (cooldownProgress >= COOLDOWN_DURATION * TICKS_PER_SECOND * 60) {
         ipcRenderer.send(IpcMessages.EndTask)
       }
     }
@@ -29,7 +29,7 @@ const Timer = ({ duration, name }: { duration: number; name: string }) => {
       <Progress
         isComplete={cooldownProgress > 0}
         value={taskProgress}
-        max={duration * TICKS_PER_SECOND}
+        max={duration * TICKS_PER_SECOND * 60}
       />
       <TaskTitle>{name}</TaskTitle>
       {cooldownProgress > 0 && (
