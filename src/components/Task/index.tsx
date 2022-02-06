@@ -1,12 +1,10 @@
-import { ipcRenderer } from 'electron'
 import React, { ChangeEventHandler, useEffect, useState } from 'react'
-import IpcMessages from '../../constants/ipcMessages'
+import IpcMessage from '../../constants/ipcMessage'
 import { Input, StartTaskButton, InputContainer } from './styles'
 import { TaskViewContainer } from '../shared/styles'
 import Mousetrap from 'mousetrap'
 import View from '../../constants/view'
-import { createTask } from '../../models/Task'
-import { Status } from '../../constants/status'
+import { createIpcRendererInterface } from '../../utils/IpcInterface'
 
 const TaskView: React.FC<{
   name: string
@@ -17,13 +15,15 @@ const TaskView: React.FC<{
     activeTaskDuration ? activeTaskDuration.toString() : '',
   )
 
+  const ipcRenderer = createIpcRendererInterface()
+
   useEffect(() => {
     Mousetrap.bind('mod+enter', () => {
       onStartTask()
     })
     Mousetrap.bind('alt+s', (e) => {
       e.preventDefault()
-      ipcRenderer.send(IpcMessages.CueSetView, View.Schedule)
+      ipcRenderer.send({ channel: IpcMessage.CueSetView, param: View.Schedule })
     })
     return () => {
       Mousetrap.unbind('mod+enter')
@@ -43,9 +43,12 @@ const TaskView: React.FC<{
 
   const onStartTask = () => {
     if (!name.length || !duration) return
-    ipcRenderer.send(IpcMessages.StartTask, {
-      name,
-      duration,
+    ipcRenderer.send({
+      channel: IpcMessage.StartTask,
+      param: {
+        name,
+        duration,
+      },
     })
   }
 

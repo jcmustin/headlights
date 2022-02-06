@@ -12,9 +12,9 @@ import {
   LineNumbers,
 } from './styles'
 import { TaskViewContainer } from '../shared/styles'
-import { ipcRenderer } from 'electron'
-import IpcMessages from '../../constants/ipcMessages'
+import IpcMessage from '../../constants/ipcMessage'
 import Mousetrap from 'mousetrap'
+import { createIpcRendererInterface } from '../../utils/IpcInterface'
 
 const MIN_WIDTH = 270
 const MIN_HEIGHT = 220
@@ -40,6 +40,8 @@ const ScheduleView: React.FC<{
   const spaceWidthReference = createRef<HTMLPreElement>()
   const lineNumbers = createRef<HTMLTextAreaElement>()
   const scheduleInput = createRef<HTMLTextAreaElement>()
+
+  const ipcRenderer = createIpcRendererInterface()
 
   const computeNewDim = (
     width: number,
@@ -79,6 +81,7 @@ const ScheduleView: React.FC<{
     element && observer.observe(element)
     return () => {
       Mousetrap.unbind('mod+enter')
+      observer.disconnect()
     }
   }, [schedule, sizeReference])
 
@@ -93,7 +96,10 @@ const ScheduleView: React.FC<{
       .join('\n')
     const caret = event.target.selectionStart
     const maxTaskLength = longestTaskNameLength(newSchedule)
-    ipcRenderer.send(IpcMessages.CueSetSchedule, newSchedule)
+    ipcRenderer.send({
+      channel: IpcMessage.CueSetSchedule,
+      param: newSchedule,
+    })
     setLocalSchedule(newSchedule)
     if (maxTaskLength > tabSize / 2 || maxTaskLength < tabSize / 2 - 10) {
       setTabsize(Math.max(maxTaskLength * 2 + 10, MIN_TAB_SIZE))
@@ -105,7 +111,10 @@ const ScheduleView: React.FC<{
   }
 
   const onBlur = () => {
-    ipcRenderer.send(IpcMessages.CueSetSchedule, localSchedule)
+    ipcRenderer.send({
+      channel: IpcMessage.CueSetSchedule,
+      param: localSchedule,
+    })
     setIsFocused(false)
   }
   const onFocus = () => {
@@ -132,7 +141,7 @@ const ScheduleView: React.FC<{
   }
 
   const onSaveSchedule = () => {
-    ipcRenderer.send(IpcMessages.SaveSchedule, schedule)
+    ipcRenderer.send({ channel: IpcMessage.SaveSchedule, param: schedule })
   }
 
   return (

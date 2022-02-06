@@ -1,28 +1,36 @@
-import { ipcRenderer } from 'electron'
 import React, { useEffect, useState } from 'react'
 import './App.global.css'
 import ScheduleView from './components/Schedule'
 import TaskView from './components/Task'
 import TimerView from './components/Timer'
-import IpcMessages from './constants/ipcMessages'
-import { isStatus, Status } from './constants/status'
+import IpcMessage from './constants/ipcMessage'
 import View from './constants/view'
 import { createTask, Task, TaskData } from './models/Task'
+import { createIpcRendererInterface } from './utils/IpcInterface'
 
 export default function App() {
   const [activeTask, setActiveTask] = useState<Task>(createTask())
   const [schedule, setSchedule] = useState('')
   const [currentView, setCurrentView] = useState<View>(View.Task)
+  const ipcRenderer = createIpcRendererInterface()
   useEffect(() => {
-    ipcRenderer.on(IpcMessages.SetActiveTask, (_, taskData: TaskData) => {
-      setActiveTask(createTask(taskData))
-      console.log('x' in Status)
+    ipcRenderer.on({
+      channel: IpcMessage.SetActiveTask,
+      callback: (_, taskData: TaskData) => {
+        setActiveTask(createTask(taskData))
+      },
     })
-    ipcRenderer.on(IpcMessages.SetSchedule, (_, rawSchedule: string) => {
-      setSchedule(rawSchedule)
+    ipcRenderer.on({
+      channel: IpcMessage.SetSchedule,
+      callback: (_, rawSchedule: string) => {
+        setSchedule(rawSchedule)
+      },
     })
-    ipcRenderer.on(IpcMessages.SetView, (_, view: View) => {
-      setCurrentView(view)
+    ipcRenderer.on({
+      channel: IpcMessage.SetView,
+      callback: (_, view: View) => {
+        setCurrentView(view)
+      },
     })
   }, [])
 

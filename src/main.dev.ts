@@ -16,7 +16,6 @@ import {
   BrowserWindow,
   Display,
   globalShortcut,
-  ipcMain,
   Menu,
   screen,
   shell,
@@ -28,12 +27,11 @@ import { autoUpdater } from 'electron-updater'
 import fs from 'fs'
 
 import MenuBuilder from './menu'
-import IpcMessages from './constants/ipcMessages'
+import IpcMessage from './constants/ipcMessage'
 import View from './constants/view'
-import { createSchedule, Schedule } from './models/Schedule'
-import { createTask, Task, TaskData } from './models/Task'
+import { createTask, TaskData } from './models/Task'
 import { createAppState } from './AppState'
-import { Status } from './constants/status'
+import { createIpcMainInterface } from './utils/IpcInterface'
 
 const DATA_FILE_PATH = `../log/${new Date().toISOString().slice(0, 10)}.txt`
 
@@ -50,7 +48,7 @@ const windows: { [key: number]: BrowserWindow } = {}
 const setView = async (view: View) => {
   Object.values(windows).map((window) => {
     window.setIgnoreMouseEvents(view === View.Timer)
-    window.webContents.send(IpcMessages.SetView, view)
+    window.webContents.send(IpcMessage.SetView, view)
   })
 }
 
@@ -58,53 +56,65 @@ const setView = async (view: View) => {
 //   ? fs.readFileSync(DATA_FILE_PATH).toString()
 //   : ''
 
+const ipcMain = createIpcMainInterface()
+
 const appState = createAppState()
 
-ipcMain.on(IpcMessages.CueSetView, (_, view: View) => {
-  setView(view)
+ipcMain.on({
+  channel: IpcMessage.CueSetView,
+  callback: (_, view: View) => {
+    setView(view)
+  },
 })
 
-ipcMain.on(IpcMessages.StartTask, (_, taskData: TaskData) => {
-  console.log('beforeSaveTask', appState.schedule.toString())
-  appState.schedule.insertBeforeActive(createTask(taskData))
-  console.log('afterSaveTask', appState.schedule.toString())
-  Object.values(windows).forEach((window) => {
-    window.webContents.send(IpcMessages.SetActiveTask, taskData)
-  })
-  setView(View.Timer)
+ipcMain.on({
+  channel: IpcMessage.StartTask,
+  callback: (_, taskData: TaskData) => {
+    appState.schedule.insertBeforeActive(createTask(taskData))
+    ipcMain.send({ channel: IpcMessage.SetActiveTask, param: taskData })
+    setView(View.Timer)
+  },
 })
 
-ipcMain.on(IpcMessages.EndTask, () => {
-  const activeTask = appState.schedule.getActiveTask()
-  if (activeTask) {
-    activeTask.status = Status.Successful
-    Object.values(windows).forEach((window) => {
-      window.webContents.send(
-        IpcMessages.SetSchedule,
-        appState.schedule.toString(),
-      )
-    })
-  }
-  setView(View.Task)
+ipcMain.on({
+  channel: IpcMessage.EndTask,
+  callback: () => {
+    const { activeTask } = appState
+    if (activeTask) {
+      appState.completeActiveTask()
+      ipcMain.send({
+        channel: IpcMessage.SetSchedule,
+        param: appState.schedule.toString(),
+      })
+      ipcMain.send({
+        channel: IpcMessage.SetActiveTask,
+        param: activeTask.serialize(),
+      })
+    }
+    setView(View.Task)
+  },
 })
 
-ipcMain.on(IpcMessages.CueSetSchedule, (_, rawSchedule: string) => {
-  Object.values(windows).forEach((window) => {
-    window.webContents.send(IpcMessages.SetSchedule, rawSchedule)
-  })
+ipcMain.on({
+  channel: IpcMessage.CueSetSchedule,
+  callback: (_, rawSchedule: string) => {
+    ipcMain.send({ channel: IpcMessage.SetSchedule, param: rawSchedule })
+  },
 })
 
-ipcMain.on(IpcMessages.SaveSchedule, async (_, rawSchedule: string) => {
-  console.log('beforeUpdateSchedule', appState.schedule.toString())
-  appState.updateSchedule(rawSchedule)
-  console.log('afterUpdateSchedule', appState.schedule.toString())
-  Object.values(windows).forEach((window) => {
-    window.webContents.send(
-      IpcMessages.SetActiveTask,
-      appState.activeTask?.serialize(),
-    )
-  })
-  setView(View.Task)
+ipcMain.on({
+  channel: IpcMessage.SaveSchedule,
+  callback: async (_, rawSchedule: string) => {
+    appState.updateSchedule(rawSchedule)
+    const { activeTask } = appState
+    if (activeTask) {
+      ipcMain.send({
+        channel: IpcMessage.SetActiveTask,
+        param: activeTask.serialize(),
+      })
+    }
+    setView(View.Task)
+  },
 })
 
 if (process.env.NODE_ENV === 'production') {
@@ -116,7 +126,7 @@ if (
   process.env.NODE_ENV === 'development' ||
   process.env.DEBUG_PROD === 'true'
 ) {
-  // require('electron-debug')();
+  // require('electron-debug')()
 }
 
 const installExtensions = async () => {
@@ -269,7 +279,7 @@ const registerShortcuts = () => {
     {
       command: 'CommandOrControl+Alt+T',
       action: () => {
-        ipcMain.emit(IpcMessages.EndTask)
+        ipcMain.emit({ channel: IpcMessage.EndTask })
       },
     },
     {
