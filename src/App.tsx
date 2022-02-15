@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import './App.global.css'
 import ScheduleView from './components/Schedule'
 import TaskView from './components/Task'
 import TimerView from './components/Timer'
