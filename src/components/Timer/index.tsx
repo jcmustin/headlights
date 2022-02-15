@@ -20,7 +20,7 @@ const Timer = ({ duration, name }: { duration: number; name: string }) => {
     setProgress(Math.min(duration * TICKS_PER_SECOND * 60, taskProgress + 1))
     if (taskProgress >= duration * TICKS_PER_SECOND * 60) {
       setCooldownProgress(cooldownProgress + 1)
-      if (cooldownProgress >= COOLDOWN_DURATION * TICKS_PER_SECOND * 60) {
+      if (cooldownProgress >= COOLDOWN_DURATION * TICKS_PER_SECOND) {
         ipcRenderer.send({ channel: IpcMessage.EndTask })
       }
     }
