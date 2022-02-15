@@ -1,6 +1,6 @@
 import {
   BrowserWindow,
-  ipcMain as i,
+  ipcMain,
   IpcMainEvent,
   ipcRenderer,
   IpcRendererEvent,
@@ -70,18 +70,20 @@ export type IpcRendererInterface = {
   on: (params: IpcCallback) => void
 }
 
-export const createIpcMainInterface = (): IpcMainInterface => {
+export const createIpcMainInterface = (windows: {
+  [key: number]: BrowserWindow
+}): IpcMainInterface => {
   return {
     on: (params: IpcCallback): void => {
-      i.on(params.channel, params.callback)
+      ipcMain.on(params.channel, params.callback)
     },
     emit: (params: IpcParams) => {
       'param' in params
         ? ipcRenderer.emit(params.channel, params.param)
-        : i.emit(params.channel)
+        : ipcMain.emit(params.channel)
     },
     send: (params: IpcParams) => {
-      BrowserWindow.getAllWindows().forEach((window) => {
+      Object.values(windows).forEach((window) => {
         'param' in params
           ? window.webContents.send(params.channel, params.param)
           : window.webContents.send(params.channel)

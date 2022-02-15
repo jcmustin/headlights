@@ -32,7 +32,6 @@ export const createAppState = (rawSchedule?: string): AppState => {
       activeTask = schedule.getActiveTask()
     },
     updateSchedule(rawSchedule: string) {
-      console.log('rawSchedule', rawSchedule)
       schedule = createSchedule(rawSchedule)
       activeTask = schedule.getActiveTask()
     },

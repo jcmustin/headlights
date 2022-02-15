@@ -56,7 +56,7 @@ const setView = async (view: View) => {
 //   ? fs.readFileSync(DATA_FILE_PATH).toString()
 //   : ''
 
-const ipcMain = createIpcMainInterface()
+const ipcMain = createIpcMainInterface(windows)
 
 const appState = createAppState()
 
@@ -238,18 +238,14 @@ const createWindows = async () => {
  */
 
 app.once('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  app.quit()
 })
 
 app.once('before-quit', () => {
-  if (!fs.existsSync(DATA_FILE_PATH)) {
-    fs.writeFileSync(DATA_FILE_PATH, `${appState.schedule}\n`)
-  }
-  fs.appendFileSync(DATA_FILE_PATH, `${appState.schedule}\n`)
+  // if (!fs.existsSync(DATA_FILE_PATH)) {
+  //   fs.writeFileSync(DATA_FILE_PATH, `${appState.schedule}\n`)
+  // }
+  // fs.appendFileSync(DATA_FILE_PATH, `${appState.schedule}\n`)
 })
 
 let tray

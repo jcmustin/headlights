@@ -33,7 +33,6 @@ export function createSchedule(rawSchedule?: string): Schedule {
     },
     insertBeforeActive(task: Task) {
       const activeTask = getActiveTask()
-      console.log('compare:', activeTask, task)
       if (activeTask && !task.is(activeTask)) {
         entries.splice(entries.indexOf(activeTask), 0, task)
       }
