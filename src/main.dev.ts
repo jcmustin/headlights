@@ -82,13 +82,14 @@ ipcMain.on({
     const { activeTask } = appState
     if (activeTask) {
       appState.completeActiveTask()
+      const { activeTask: newActiveTask } = appState
+      ipcMain.send({
+        channel: IpcMessage.SetActiveTask,
+        param: newActiveTask?.serialize(),
+      })
       ipcMain.send({
         channel: IpcMessage.SetSchedule,
         param: appState.schedule.toString(),
-      })
-      ipcMain.send({
-        channel: IpcMessage.SetActiveTask,
-        param: activeTask.serialize(),
       })
     }
     setView(View.Task)
