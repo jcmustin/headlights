@@ -14,11 +14,12 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 ### High
 
 - Focus on task/schedule view on mac?
+- Fix app close command
 
 ### Med
 
 - Modify style of completed tasks (strikethrough?)
-- reconsider [ ] notation. I don't know that it's needed.f
+- reconsider [ ] notation. I don't know that it's needed.
 - Allow modifying schedule while task running
 - Save to file
 - `yarn add use-error-boundary`: https://github.com/JoschuaSchneider/use-error-boundary
@@ -48,6 +49,7 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 - ~~Add factory for task~~
 - ~~Interpolate on-the-fly tasks into schedule~~
 - ~~Update task status in schedule on completion~~
+- ~~Fix active task update on task end~~
 
 ## User Journey
 
