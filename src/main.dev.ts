@@ -270,7 +270,7 @@ const registerShortcuts = () => {
     {
       command: 'CommandOrControl+Alt+Q',
       action: () => {
-        app.quit()
+        app.exit(0)
       },
     },
     {
