@@ -200,9 +200,11 @@ const createWindow: (display: Display) => BrowserWindow = (display) => {
   menuBuilder.buildMenu()
 
   // Open urls in the user's browser
-  window.webContents.on('new-window', (event, url) => {
-    event.preventDefault()
-    shell.openExternal(url)
+  window.webContents.setWindowOpenHandler((details) => {
+    shell.openExternal(details.url)
+    return {
+      action: 'deny',
+    }
   })
 
   return window
@@ -226,6 +228,7 @@ const createWindows = async () => {
   })
 
   screen.on('display-removed', (_, oldDisplay) => {
+    windows[oldDisplay.id].close()
     delete windows[oldDisplay.id]
   })
 
@@ -242,11 +245,16 @@ app.once('window-all-closed', () => {
   app.quit()
 })
 
+app.once('window-all-closed', app.quit)
 app.once('before-quit', () => {
   // if (!fs.existsSync(DATA_FILE_PATH)) {
   //   fs.writeFileSync(DATA_FILE_PATH, `${appState.schedule}\n`)
   // }
   // fs.appendFileSync(DATA_FILE_PATH, `${appState.schedule}\n`)
+  Object.entries(windows).forEach(([_, window]) => {
+    window.removeAllListeners()
+    window.close()
+  })
 })
 
 let tray
