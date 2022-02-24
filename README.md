@@ -13,6 +13,9 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 
 ### High
 
+- task start should add to schedule
+- fix bug: adding displays can delete schedule
+- bug: task end checks off next task
 - Focus on task/schedule view on mac?
 - Fix app close command
 - disable `nodeIntegration`, enable `contextIsolation`, add `preload.js`
