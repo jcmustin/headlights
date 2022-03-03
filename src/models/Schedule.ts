@@ -35,6 +35,8 @@ export function createSchedule(rawSchedule?: string): Schedule {
       const activeTask = getActiveTask()
       if (activeTask && !task.is(activeTask)) {
         entries.splice(entries.indexOf(activeTask), 0, task)
+      } else if (!activeTask) {
+        entries.splice(entries.length, 0, task)
       }
     },
     enqueue(task: Task) {
