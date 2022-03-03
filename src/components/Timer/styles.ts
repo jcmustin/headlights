@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { lighten, opacify } from 'polished'
+import { lighten, opacify, saturate } from 'polished'
 import { FONT_STYLE, PRIMARY_COLOR } from '../../constants/constants'
 
 export const Progress = styled.progress<{ isComplete?: boolean }>`
@@ -7,7 +7,7 @@ export const Progress = styled.progress<{ isComplete?: boolean }>`
   top: 0;
   left: 0;
   width: 100%;
-  height: 9.5vh; // 5.1vh;
+  height: 3.5vh; // 5.1vh;
   max-height: 220px;
   border-radius: 0;
   &::-webkit-progress-bar {
@@ -15,7 +15,10 @@ export const Progress = styled.progress<{ isComplete?: boolean }>`
   }
   &::-webkit-progress-value {
     background: ${({ isComplete }) =>
-      lighten(0.15, opacify(-0.6, isComplete ? '#fff' : PRIMARY_COLOR))};
+      saturate(
+        1,
+        lighten(0.3, opacify(-0.3, isComplete ? '#fff' : PRIMARY_COLOR)),
+      )};
     box-shadow: ${({ isComplete }) =>
       isComplete ? '0 0 2px 3px #fffb, inset 0 0 80px 6px #fff' : 'none'};
     transition: background-color 0.2s, box-shadow 0.3s;
