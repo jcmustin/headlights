@@ -71,6 +71,10 @@ ipcMain.on({
   channel: IpcMessage.StartTask,
   callback: (_, taskData: TaskData) => {
     appState.schedule.insertBeforeActive(createTask(taskData))
+    ipcMain.send({
+      channel: IpcMessage.SetSchedule,
+      param: appState.schedule.toString(),
+    })
     ipcMain.send({ channel: IpcMessage.SetActiveTask, param: taskData })
     setView(View.Timer)
   },
