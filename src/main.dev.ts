@@ -286,7 +286,7 @@ const registerShortcuts = () => {
       },
     },
     {
-      command: 'CommandOrControl+Alt+T',
+      command: 'Alt+space',
       action: () => {
         ipcMain.emit({ channel: IpcMessage.EndTask })
       },
