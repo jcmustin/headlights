@@ -35,11 +35,13 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 - Specify successful vs unsuccessful
   - add two shortcuts
 - Refactor ipc message code
+- Remove task view? You maybe only need schedule view.
 
 ### Low
 
 - Allow switching between schedule tasks in task view.
 - Show next task on task entry view
+- schedule doesn't resize width down on delete.
 
 ### Maybe
 
