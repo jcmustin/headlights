@@ -13,13 +13,8 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 
 ### High
 
-- task start should add to schedule
-- fix bug: adding displays can delete schedule
-- bug: task end checks off next task
-- Focus on task/schedule view on mac?
-- Fix app close command
+- Focus window on task/schedule view on mac
 - disable `nodeIntegration`, enable `contextIsolation`, add `preload.js`
-- if possible, find a way to dim upper section on hover.
 
 ### Med
 
@@ -31,11 +26,14 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 - profile performance: https://www.electronjs.org/docs/latest/tutorial/performance
 - `yarn add use-error-boundary`: https://github.com/JoschuaSchneider/use-error-boundary
 - Show on all spaces in Mac
-- Allow switching between days
+- Allow switching between daysß
 - Specify successful vs unsuccessful
   - add two shortcuts
 - Refactor ipc message code
 - Remove task view? You maybe only need schedule view.
+- if possible, find a way to dim upper section on hover.
+- Fix app close command
+- fix bug: adding displays can delete schedule
 
 ### Low
 
@@ -43,11 +41,14 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 - Show next task on task entry view
 - schedule doesn't resize width down on delete.
 
-### Maybe
+### Maybeß
 
 - Add task priorities + sort by priority?
 - Allow time-of-day tasks?
 - Allow task tags? just after time maybe?
+- vim?
+- Add actual task duration on complete, also separated by | (used for early completion)
+- task categories via first letter, or two letter code?
 
 ### Done
 
@@ -59,6 +60,8 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 - ~~Interpolate on-the-fly tasks into schedule~~
 - ~~Update task status in schedule on completion~~
 - ~~Fix active task update on task end~~
+- ~~task start should add to schedule~~
+- ~~bug: task end checks off next task~~
 
 ## User Journey
 
