@@ -60,6 +60,14 @@ const ScheduleView: React.FC<{
         return longestTaskName.length
       }),
     )
+
+  const updateTabSize = () => {
+    const maxTaskLength = longestTaskNameLength(schedule)
+    if (maxTaskLength > tabSize / 2 || maxTaskLength < tabSize / 2 - 10) {
+      setTabsize(Math.max(maxTaskLength * 2 + 10, MIN_TAB_SIZE))
+    }
+  }
+
   useEffect(() => {
     Mousetrap.bind(['mod+enter', 'alt+s'], (e) => {
       e.preventDefault()
@@ -77,6 +85,7 @@ const ScheduleView: React.FC<{
       if (height - computedNewHeight < EPSILON) {
         setHeight(computedNewHeight)
       }
+      updateTabSize()
     })
     element && observer.observe(element)
     return () => {
@@ -95,15 +104,12 @@ const ScheduleView: React.FC<{
       )
       .join('\n')
     const caret = event.target.selectionStart
-    const maxTaskLength = longestTaskNameLength(newSchedule)
     ipcRenderer.send({
       channel: IpcMessage.CueSetSchedule,
       param: newSchedule,
     })
     setLocalSchedule(newSchedule)
-    if (maxTaskLength > tabSize / 2 || maxTaskLength < tabSize / 2 - 10) {
-      setTabsize(Math.max(maxTaskLength * 2 + 10, MIN_TAB_SIZE))
-    }
+    updateTabSize()
     window.requestAnimationFrame(() => {
       event.target.selectionStart = caret
       event.target.selectionEnd = caret
