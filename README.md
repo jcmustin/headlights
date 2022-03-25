@@ -23,8 +23,8 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 - reconsider [ ] notation. I don't know that it's needed.
 - Allow modifying schedule while task running
 - Save to file
-- profile performance: https://www.electronjs.org/docs/latest/tutorial/performance
-- `yarn add use-error-boundary`: https://github.com/JoschuaSchneider/use-error-boundary
+- profile performance: <https://www.electronjs.org/docs/latest/tutorial/performance>
+- `yarn add use-error-boundary`: <https://github.com/JoschuaSchneider/use-error-boundary>
 - Show on all spaces in Mac
 - Allow switching between daysß
 - Specify successful vs unsuccessful
