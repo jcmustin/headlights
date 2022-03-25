@@ -1,13 +1,12 @@
 {
-  "name": "electron-react-boilerplate",
-  "productName": "electron-react-boilerplate",
+  "name": "headlights",
+  "productName": "Headlights",
   "version": "2.3.0",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "description": "Headlights is a tool for staying focused. It's a pomodoro timer with a strict taskmaster component: it asks you what you want to do next and how long it will take, and fills your computer screen until you answer. Once you've decided on a task, a timer overlay helps you rememeber what you're working on. Once the timer completes, it asks again, and the cycle repeats.",
   "main": "./main.prod.js",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
+    "name": "Jonathan Mustin",
+    "email": "jonathan.mustin@gmail.com"
   },
   "scripts": {
     "electron-rebuild": "node -r ../.erb/scripts/BabelRegister.js ../.erb/scripts/ElectronRebuild.js",
