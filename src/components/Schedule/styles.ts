@@ -19,7 +19,6 @@ const fadeInKeyframes = keyframes`
 
 const sharedStyles = css`
   line-height: 1.5;
-  font-size: 2rem;
   ${FONT_STYLE};
 `
 
@@ -53,10 +52,11 @@ const placeholderStyles = css`
   text-shadow: 0px 1.4px 0px ${opacify(-0.6, darken(0.4, UI_COLOR))};
 `
 
-export const SizeReference = styled.pre<{ tabSize?: number }>`
+export const SizeReference = styled.pre<{ tabSize?: number; fontSize: number }>`
   ${sharedStyles};
   display: inline-block;
-  tab-size: ${({ tabSize = 0 }) => tabSize};
+  tab-size: ${({ tabSize }) => tabSize};
+  font-size: ${({ fontSize }) => `${fontSize}rem`};
   visibility: hidden;
 `
 
@@ -65,8 +65,10 @@ export const ScheduleInput = styled.textarea<{
   widthInPx: number
   heightInPx: number
   maxHeight: number
+  fontSize: number
 }>`
   ${textAreaStyles};
+  font-size: ${({ fontSize }) => `${fontSize}rem`};
   tab-size: ${({ tabSize }) => tabSize};
   width: ${(props) => props.widthInPx}px;
   height: ${(props) => props.heightInPx}px;
@@ -102,9 +104,11 @@ export const LineNumbers = styled.textarea<{
   heightInPx: number
   maxHeight: number
   scheduleEmpty: boolean
+  fontSize: number
 }>`
   ${textAreaStyles};
   ${({ scheduleEmpty }) => scheduleEmpty && placeholderStyles};
+  font-size: ${({ fontSize }) => `${fontSize}rem`};
   user-select: none;
   transform: translateX(calc(-50% - 220px));
   transition: width 0.2s, height 0.2s;

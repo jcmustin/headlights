@@ -20,10 +20,12 @@ const MIN_WIDTH = 270
 const MIN_HEIGHT = 220
 const SIDE_MARGIN = 200
 const TOP_MARGIN = 100
-const MAX_WIDTH = document.body.getBoundingClientRect().width - SIDE_MARGIN
-const MAX_HEIGHT = document.body.getBoundingClientRect().height - TOP_MARGIN
+const MAX_WIDTH = document.documentElement.clientWidth - SIDE_MARGIN
+const MAX_HEIGHT = document.documentElement.clientHeight - TOP_MARGIN
 const EPSILON = 10
 const MIN_TAB_SIZE = 40
+const DEFAULT_FONT_SIZE = 2
+// const MIN_FONT_SIZE = 1.3
 
 const ROUND = 150
 const ScheduleView: React.FC<{
@@ -32,6 +34,7 @@ const ScheduleView: React.FC<{
   const [width, setWidth] = useState(MIN_WIDTH)
   const [height, setHeight] = useState(MIN_HEIGHT)
   const [tabSize, setTabsize] = useState(MIN_TAB_SIZE)
+  const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE)
   const [localSchedule, setLocalSchedule] = useState(globalSchedule)
   const [isFocused, setIsFocused] = useState(false)
   const schedule = isFocused ? localSchedule : globalSchedule
@@ -79,12 +82,24 @@ const ScheduleView: React.FC<{
       const { width: newWidth, height: newHeight } = entry.contentRect
       const computedNewWidth = computeNewDim(newWidth, ROUND, 0, MIN_WIDTH)
       const computedNewHeight = computeNewDim(newHeight, ROUND, 0, MIN_WIDTH)
-      if (width - computedNewWidth < EPSILON) {
+      if (Math.abs(width - computedNewWidth) > EPSILON) {
         setWidth(Math.min(computedNewWidth, MAX_WIDTH))
       }
-      if (height - computedNewHeight < EPSILON) {
-        setHeight(computedNewHeight)
+      if (Math.abs(height - computedNewHeight) > EPSILON) {
+        setHeight(Math.min(computedNewHeight, MAX_HEIGHT))
       }
+      // if (
+      //   (newHeight > MAX_HEIGHT || newWidth > MAX_WIDTH) &&
+      //   fontSize !== MIN_FONT_SIZE
+      // ) {
+      //   setFontSize(Math.max(fontSize * 0.95, MIN_FONT_SIZE))
+      // } else if (
+      //   newHeight < MAX_HEIGHT * 0.75 &&
+      //   newWidth < MAX_WIDTH * 0.75 &&
+      //   fontSize !== DEFAULT_FONT_SIZE
+      // ) {
+      //   setFontSize(Math.min(fontSize / 0.95, DEFAULT_FONT_SIZE))
+      // }
       updateTabSize()
     })
     element && observer.observe(element)
@@ -150,6 +165,7 @@ const ScheduleView: React.FC<{
     ipcRenderer.send({ channel: IpcMessage.SaveSchedule, param: schedule })
   }
 
+  console.log(MAX_WIDTH)
   return (
     <TaskViewContainer>
       <ScheduleInput
@@ -167,6 +183,7 @@ const ScheduleView: React.FC<{
         tabSize={tabSize}
         maxHeight={MAX_HEIGHT}
         className="mousetrap"
+        fontSize={fontSize}
       />
       {/* the added space on the following line prevents the pre tag from discarding the last line break. */}
       <LineNumbers
@@ -181,11 +198,14 @@ const ScheduleView: React.FC<{
           .join('\n')}
         disabled
         onScroll={onScrollLineNumbers}
+        fontSize={fontSize}
       />
-      <SizeReference tabSize={tabSize} ref={sizeReference}>
+      <SizeReference tabSize={tabSize} ref={sizeReference} fontSize={fontSize}>
         {schedule}{' '}
       </SizeReference>
-      <SizeReference ref={spaceWidthReference}> </SizeReference>
+      <SizeReference ref={spaceWidthReference} fontSize={fontSize}>
+        {' '}
+      </SizeReference>
       <SaveScheduleButton onClick={onSaveSchedule}></SaveScheduleButton>
     </TaskViewContainer>
   )
