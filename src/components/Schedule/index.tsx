@@ -25,7 +25,7 @@ const MAX_HEIGHT = document.documentElement.clientHeight - TOP_MARGIN
 const EPSILON = 10
 const MIN_TAB_SIZE = 40
 const DEFAULT_FONT_SIZE = 2
-// const MIN_FONT_SIZE = 1.3
+const MIN_FONT_SIZE = 1.3
 
 const ROUND = 150
 const ScheduleView: React.FC<{
@@ -88,18 +88,18 @@ const ScheduleView: React.FC<{
       if (Math.abs(height - computedNewHeight) > EPSILON) {
         setHeight(Math.min(computedNewHeight, MAX_HEIGHT))
       }
-      // if (
-      //   (newHeight > MAX_HEIGHT || newWidth > MAX_WIDTH) &&
-      //   fontSize !== MIN_FONT_SIZE
-      // ) {
-      //   setFontSize(Math.max(fontSize * 0.95, MIN_FONT_SIZE))
-      // } else if (
-      //   newHeight < MAX_HEIGHT * 0.75 &&
-      //   newWidth < MAX_WIDTH * 0.75 &&
-      //   fontSize !== DEFAULT_FONT_SIZE
-      // ) {
-      //   setFontSize(Math.min(fontSize / 0.95, DEFAULT_FONT_SIZE))
-      // }
+      if (
+        (newHeight > MAX_HEIGHT || newWidth > MAX_WIDTH) &&
+        fontSize !== MIN_FONT_SIZE
+      ) {
+        setFontSize(Math.max(fontSize * 0.95, MIN_FONT_SIZE))
+      } else if (
+        newHeight < MAX_HEIGHT * 0.75 &&
+        newWidth < MAX_WIDTH * 0.75 &&
+        fontSize !== DEFAULT_FONT_SIZE
+      ) {
+        setFontSize(Math.min(fontSize / 0.95, DEFAULT_FONT_SIZE))
+      }
       updateTabSize()
     })
     element && observer.observe(element)
