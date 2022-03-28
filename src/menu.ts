@@ -57,7 +57,7 @@ export default class MenuBuilder {
       label: 'Electron',
       submenu: [
         {
-          label: 'Hide ElectronReact',
+          label: 'Hide Headlights',
           accelerator: 'Command+H',
           selector: 'hide:',
         },

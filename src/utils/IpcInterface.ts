@@ -6,12 +6,13 @@ import {
   IpcRendererEvent,
 } from 'electron'
 import IpcMessage from '../constants/ipcMessage'
+import { Status } from '../constants/status'
 import View from '../constants/view'
 import { TaskData } from '../models/Task'
 
 type IpcParams =
   | { channel: IpcMessage.StartTask; param: TaskData }
-  | { channel: IpcMessage.EndTask }
+  | { channel: IpcMessage.EndTask; param?: Status }
   | { channel: IpcMessage.SetActiveTask; param: TaskData | undefined }
   | { channel: IpcMessage.CueSetSchedule; param: string }
   | { channel: IpcMessage.SetSchedule; param: string }
@@ -29,7 +30,7 @@ type IpcCallback =
     }
   | {
       channel: IpcMessage.EndTask
-      callback: (event: IpcMainEvent | IpcRendererEvent) => void
+      callback: (event: IpcMainEvent | IpcRendererEvent, param?: Status) => void
     }
   | {
       channel: IpcMessage.SetActiveTask
@@ -79,7 +80,7 @@ export const createIpcMainInterface = (windows: {
     },
     emit: (params: IpcParams) => {
       'param' in params
-        ? ipcRenderer.emit(params.channel, params.param)
+        ? ipcMain.emit(params.channel, params.param)
         : ipcMain.emit(params.channel)
     },
     send: (params: IpcParams) => {

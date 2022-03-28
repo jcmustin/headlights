@@ -12,9 +12,8 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 ## To Dos
 
 ### High
-
 - Focus window on task/schedule view on mac
-- disable `nodeIntegration`, enable `contextIsolation`, add `preload.js`
+- Fix 0.1 =/= .1 issue
 
 ### Med
 
@@ -23,6 +22,7 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 - reconsider [ ] notation. I don't know that it's needed.
 - Allow modifying schedule while task running
 - Save to file
+- disable `nodeIntegration`, enable `contextIsolation`, add `preload.js`
 - profile performance: <https://www.electronjs.org/docs/latest/tutorial/performance>
 - `yarn add use-error-boundary`: <https://github.com/JoschuaSchneider/use-error-boundary>
 - Show on all spaces in Mac
@@ -62,6 +62,8 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 - ~~Fix active task update on task end~~
 - ~~task start should add to schedule~~
 - ~~bug: task end checks off next task~~
+- ~~Fix time erasure~~
+- Fix Type Error
 
 ## User Journey
 

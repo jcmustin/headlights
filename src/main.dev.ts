@@ -32,6 +32,7 @@ import View from './constants/view'
 import { createTask, TaskData } from './models/Task'
 import { createAppState } from './AppState'
 import { createIpcMainInterface } from './utils/IpcInterface'
+import { Status } from './constants/status'
 
 const DATA_FILE_PATH = `../log/${new Date().toISOString().slice(0, 10)}.txt`
 
@@ -76,27 +77,32 @@ ipcMain.on({
       param: appState.schedule.toString(),
     })
     ipcMain.send({ channel: IpcMessage.SetActiveTask, param: taskData })
+    appState.startActiveTask()
     setView(View.Timer)
   },
 })
 
+const onEndTask = (status: Status = Status.Successful) => {
+  const { activeTask } = appState
+  if (activeTask) {
+    appState.completeActiveTask(status)
+    const { activeTask: newActiveTask } = appState
+    ipcMain.send({
+      channel: IpcMessage.SetActiveTask,
+      param: newActiveTask?.serialize(),
+    })
+    ipcMain.send({
+      channel: IpcMessage.SetSchedule,
+      param: appState.schedule.toString(),
+    })
+  }
+  setView(View.Task)
+}
+
 ipcMain.on({
   channel: IpcMessage.EndTask,
-  callback: () => {
-    const { activeTask } = appState
-    if (activeTask) {
-      appState.completeActiveTask()
-      const { activeTask: newActiveTask } = appState
-      ipcMain.send({
-        channel: IpcMessage.SetActiveTask,
-        param: newActiveTask?.serialize(),
-      })
-      ipcMain.send({
-        channel: IpcMessage.SetSchedule,
-        param: appState.schedule.toString(),
-      })
-    }
-    setView(View.Task)
+  callback: (_, status?: Status) => {
+    onEndTask(status)
   },
 })
 
@@ -288,7 +294,13 @@ const registerShortcuts = () => {
     {
       command: 'Alt+space',
       action: () => {
-        ipcMain.emit({ channel: IpcMessage.EndTask })
+        onEndTask(Status.Successful)
+      },
+    },
+    {
+      command: 'Alt+Shift+space',
+      action: () => {
+        onEndTask(Status.Failed)
       },
     },
     {

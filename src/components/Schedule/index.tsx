@@ -50,19 +50,19 @@ const ScheduleView: React.FC<{
     min: number,
   ): number => Math.max(Math.ceil(width / round) * round + offset, min)
 
-  const longestTaskNameLength = (schedule: string): number =>
+  const longestTaskLength = (schedule: string): number =>
     Math.max(
       ...schedule.split('\n').map((task): number => {
-        const longestTaskName = (task.match(/([^\|]+)(?:\s\|.*)?/) || [
+        const longestTaskRaw = (task.match(/([^\|]+)(?:\s\|.*)?/) || [
           '',
           '',
-        ])[1]
-        return longestTaskName.length
+        ])[0]
+        return longestTaskRaw.length
       }),
     )
 
   const updateTabSize = () => {
-    const maxTaskLength = longestTaskNameLength(schedule)
+    const maxTaskLength = longestTaskLength(schedule)
     if (maxTaskLength > tabSize / 2 || maxTaskLength < tabSize / 2 - 10) {
       setTabsize(Math.max(maxTaskLength * 2 + 10, MIN_TAB_SIZE))
     }
