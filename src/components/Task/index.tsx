@@ -62,6 +62,7 @@ const TaskView: React.FC<{
           onChange={onNameChange}
           autoFocus
           className="mousetrap"
+          disabled
         />
       </InputContainer>
       <InputContainer>
@@ -71,6 +72,7 @@ const TaskView: React.FC<{
           value={duration}
           onChange={onDurationChange}
           className="mousetrap"
+          disabled
         />
       </InputContainer>
       <StartTaskButton

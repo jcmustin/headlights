@@ -10,7 +10,7 @@ import { createIpcRendererInterface } from './utils/IpcInterface'
 export default function App() {
   const [activeTask, setActiveTask] = useState<Task>(createTask())
   const [schedule, setSchedule] = useState('')
-  const [currentView, setCurrentView] = useState<View>(View.Task)
+  const [currentView, setCurrentView] = useState<View>(View.Schedule)
   const ipcRenderer = createIpcRendererInterface()
   useEffect(() => {
     ipcRenderer.on({

@@ -14,6 +14,7 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 ### High
 - Focus window on task/schedule view on mac
 - Fix 0.1 =/= .1 issue
+- Fix "StartTime.toFormat is not a function"
 
 ### Med
 
