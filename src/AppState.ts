@@ -1,40 +1,73 @@
 import { DateTime } from 'luxon'
 
 import { Status } from './constants/status'
+import View from './constants/view'
 import { createSchedule, Schedule } from './models/Schedule'
-import { Task } from './models/Task'
+import { createTask, Task } from './models/Task'
 
 export type AppState = {
+  view: View
+  scheduleActive: boolean
   schedule: Schedule
   activeDay: Date
   activeTask: Task | undefined
   startActiveTask: () => void
   completeActiveTask: (status?: Status) => void
-  updateSchedule(rawSchedule: string): void
+  updateActiveTask: () => void
+  updateSchedule: (rawSchedule: string) => void
 }
 
 export const createAppState = (rawSchedule?: string): AppState => {
   let schedule = createSchedule(rawSchedule ? rawSchedule : '')
   let activeDay = new Date()
+  let view = View.Task
+  let scheduleActive = true
+  let activeTask = schedule.getActiveTask()
   return {
+    get view() {
+      return view
+    },
+    set view(newView: View) {
+      view = newView
+    },
+    get scheduleActive() {
+      return scheduleActive
+    },
+    set scheduleActive(newScheduleActive: boolean) {
+      scheduleActive = newScheduleActive
+    },
     get schedule() {
       return schedule
     },
     activeDay,
     get activeTask(): Task | undefined {
-      return schedule.getActiveTask()
+      return activeTask
     },
     startActiveTask(): void {
       if (this.activeTask) {
         this.activeTask.startTime = DateTime.now()
       }
     },
+    updateActiveTask(): void {
+      activeTask = schedule.getActiveTask()
+    },
     completeActiveTask(status: Status = Status.Successful): void {
-      console.log(status)
-      if (this.activeTask) {
-        this.activeTask.endTime = DateTime.now()
-        this.activeTask.status = status
+      const { activeTask: cachedActiveTask } = this
+      this.updateActiveTask()
+      const { activeTask: currentActiveTask } = this
+      if (!cachedActiveTask && currentActiveTask) {
+        currentActiveTask.endTime = DateTime.now()
+        currentActiveTask.status = status
+      } else if (
+        cachedActiveTask &&
+        (cachedActiveTask.name !== currentActiveTask?.name ||
+          cachedActiveTask.duration !== currentActiveTask?.duration)
+      ) {
+        cachedActiveTask.endTime = DateTime.now()
+        cachedActiveTask.status = status
+        schedule.insertBeforeActive(cachedActiveTask)
       }
+      this.updateActiveTask()
     },
     updateSchedule(rawSchedule: string) {
       schedule = createSchedule(rawSchedule)

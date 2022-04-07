@@ -12,13 +12,15 @@ import { TaskData } from '../models/Task'
 
 type IpcParams =
   | { channel: IpcMessage.StartTask; param: TaskData }
-  | { channel: IpcMessage.EndTask; param?: Status }
+  | { channel: IpcMessage.EndTask; param?: TaskData }
   | { channel: IpcMessage.SetActiveTask; param: TaskData | undefined }
   | { channel: IpcMessage.CueSetSchedule; param: string }
   | { channel: IpcMessage.SetSchedule; param: string }
   | { channel: IpcMessage.SaveSchedule; param: string }
   | { channel: IpcMessage.CueSetView; param: View }
   | { channel: IpcMessage.SetView; param: View }
+  | { channel: IpcMessage.CueSetScheduleActive }
+  | { channel: IpcMessage.SetScheduleActive; param: boolean }
 
 type IpcCallback =
   | {
@@ -30,7 +32,10 @@ type IpcCallback =
     }
   | {
       channel: IpcMessage.EndTask
-      callback: (event: IpcMainEvent | IpcRendererEvent, param?: Status) => void
+      callback: (
+        event: IpcMainEvent | IpcRendererEvent,
+        param: TaskData,
+      ) => void
     }
   | {
       channel: IpcMessage.SetActiveTask
@@ -59,7 +64,14 @@ type IpcCallback =
       channel: IpcMessage.SetView
       callback: (event: IpcMainEvent | IpcRendererEvent, param: View) => void
     }
-
+  | {
+      channel: IpcMessage.CueSetScheduleActive
+      callback: (event: IpcMainEvent | IpcRendererEvent) => void
+    }
+  | {
+      channel: IpcMessage.SetScheduleActive
+      callback: (event: IpcMainEvent | IpcRendererEvent, param: boolean) => void
+    }
 export type IpcMainInterface = {
   on: (params: IpcCallback) => void
   emit: (params: IpcParams) => void

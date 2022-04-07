@@ -3,7 +3,6 @@ import IpcMessage from '../../constants/ipcMessage'
 import { Input, StartTaskButton, InputContainer } from './styles'
 import { TaskViewContainer } from '../shared/styles'
 import Mousetrap from 'mousetrap'
-import View from '../../constants/view'
 import { createIpcRendererInterface } from '../../utils/IpcInterface'
 
 const TaskView: React.FC<{
@@ -21,14 +20,18 @@ const TaskView: React.FC<{
     Mousetrap.bind('mod+enter', () => {
       onStartTask()
     })
-    Mousetrap.bind('alt+s', (e) => {
-      e.preventDefault()
-      ipcRenderer.send({ channel: IpcMessage.CueSetView, param: View.Schedule })
-    })
     return () => {
       Mousetrap.unbind('mod+enter')
     }
   }, [name, duration])
+
+  useEffect(() => {
+    setName(activeTaskName)
+  }, [activeTaskName])
+
+  useEffect(() => {
+    setDuration(activeTaskDuration ? activeTaskDuration.toString() : '')
+  }, [activeTaskDuration])
 
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     setName(event.target.value)

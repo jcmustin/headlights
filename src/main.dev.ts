@@ -33,6 +33,7 @@ import { createTask, TaskData } from './models/Task'
 import { createAppState } from './AppState'
 import { createIpcMainInterface } from './utils/IpcInterface'
 import { Status } from './constants/status'
+import { SaveScheduleButton } from './components/Schedule/styles'
 
 const DATA_FILE_PATH = `../log/${new Date().toISOString().slice(0, 10)}.txt`
 
@@ -47,6 +48,7 @@ export default class AppUpdater {
 const windows: { [key: number]: BrowserWindow } = {}
 
 const setView = async (view: View) => {
+  appState.view = view
   Object.values(windows).map((window) => {
     window.setIgnoreMouseEvents(view === View.Timer)
     window.webContents.send(IpcMessage.SetView, view)
@@ -83,26 +85,23 @@ ipcMain.on({
 })
 
 const onEndTask = (status: Status = Status.Successful) => {
-  const { activeTask } = appState
-  if (activeTask) {
-    appState.completeActiveTask(status)
-    const { activeTask: newActiveTask } = appState
-    ipcMain.send({
-      channel: IpcMessage.SetActiveTask,
-      param: newActiveTask?.serialize(),
-    })
-    ipcMain.send({
-      channel: IpcMessage.SetSchedule,
-      param: appState.schedule.toString(),
-    })
-  }
+  appState.completeActiveTask(status)
+  const { activeTask: nextActiveTask } = appState
+  ipcMain.send({
+    channel: IpcMessage.SetActiveTask,
+    param: nextActiveTask?.serialize(),
+  })
+  ipcMain.send({
+    channel: IpcMessage.SetSchedule,
+    param: appState.schedule.toString(),
+  })
   setView(View.Task)
 }
 
 ipcMain.on({
   channel: IpcMessage.EndTask,
-  callback: (_, status?: Status) => {
-    onEndTask(status)
+  callback: (_) => {
+    onEndTask()
   },
 })
 
@@ -117,14 +116,30 @@ ipcMain.on({
   channel: IpcMessage.SaveSchedule,
   callback: async (_, rawSchedule: string) => {
     appState.updateSchedule(rawSchedule)
+    const { view } = appState
+    if (view === View.Timer) return
+    appState.updateActiveTask()
     const { activeTask } = appState
-    if (activeTask) {
-      ipcMain.send({
-        channel: IpcMessage.SetActiveTask,
-        param: activeTask.serialize(),
-      })
+    ipcMain.send({
+      channel: IpcMessage.SetActiveTask,
+      param: activeTask?.serialize(),
+    })
+  },
+})
+
+ipcMain.on({
+  channel: IpcMessage.CueSetScheduleActive,
+  callback: async (_) => {
+    appState.scheduleActive = !appState.scheduleActive
+    if (appState.view === View.Timer) {
+      Object.values(windows).forEach((window) =>
+        window.setIgnoreMouseEvents(!appState.scheduleActive),
+      )
     }
-    setView(View.Task)
+    ipcMain.send({
+      channel: IpcMessage.SetScheduleActive,
+      param: appState.scheduleActive,
+    })
   },
 })
 
@@ -307,6 +322,12 @@ const registerShortcuts = () => {
       command: 'CommandOrControl+Alt+R',
       action: () => {
         Object.values(windows).forEach((window) => refresh(window))
+      },
+    },
+    {
+      command: 'Alt+S',
+      action: () => {
+        ipcMain.emit({ channel: IpcMessage.CueSetScheduleActive })
       },
     },
   ]

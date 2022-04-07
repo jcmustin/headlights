@@ -20,7 +20,7 @@ export type TaskData = {
   raw?: string
   name: string
   duration: number | string
-  status?: string
+  status?: Status
   startTime?: DateTime
   endTime?: DateTime
 }

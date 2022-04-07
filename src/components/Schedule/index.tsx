@@ -72,10 +72,14 @@ const ScheduleView: React.FC<{
   }
 
   useEffect(() => {
-    Mousetrap.bind(['mod+enter', 'alt+s'], (e) => {
-      e.preventDefault()
+    return () => {
       onSaveSchedule()
-    })
+      let e = new Event('componentUnmount')
+      document.dispatchEvent(e)
+    }
+  }, [])
+
+  useEffect(() => {
     const element = sizeReference.current
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0]
@@ -103,11 +107,11 @@ const ScheduleView: React.FC<{
       updateTabSize()
     })
     element && observer.observe(element)
+    document.addEventListener('componentUnmount', onSaveSchedule)
     return () => {
-      Mousetrap.unbind('mod+enter')
-      observer.disconnect()
+      document.removeEventListener('componentUnmount', onSaveSchedule)
     }
-  }, [schedule, sizeReference])
+  }, [sizeReference])
 
   const onScheduleChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     const newSchedule = event.target.value

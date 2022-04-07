@@ -8,6 +8,8 @@ enum IpcMessage {
   SaveSchedule = 'save-schedule',
   CueSetView = 'cue-set-view',
   SetView = 'set-view',
+  SetScheduleActive = 'set-schedule-active',
+  CueSetScheduleActive = 'cue-set-schedule-active',
 }
 
 export default IpcMessage
