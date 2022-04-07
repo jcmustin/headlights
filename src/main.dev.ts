@@ -309,13 +309,17 @@ const registerShortcuts = () => {
     {
       command: 'Alt+space',
       action: () => {
-        onEndTask(Status.Successful)
+        if (appState.view === View.Timer) {
+          onEndTask(Status.Successful)
+        }
       },
     },
     {
       command: 'Alt+Shift+space',
       action: () => {
-        onEndTask(Status.Failed)
+        if (appState.view === View.Timer) {
+          onEndTask(Status.Failed)
+        }
       },
     },
     {
