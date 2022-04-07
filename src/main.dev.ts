@@ -244,7 +244,6 @@ const createWindows = async () => {
   }
 
   screen.getAllDisplays().forEach((display) => {
-    console.log(display.id)
     windows[display.id] = createWindow(display)
   })
 

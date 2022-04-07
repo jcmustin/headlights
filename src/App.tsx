@@ -42,7 +42,7 @@ export default function App() {
 
   return (
     <>
-      {currentView === View.Task && (
+      {currentView === View.Task && !scheduleOpen && (
         <TaskView duration={activeTask.duration} name={activeTask.name} />
       )}
       {scheduleOpen && <ScheduleView schedule={schedule} />}

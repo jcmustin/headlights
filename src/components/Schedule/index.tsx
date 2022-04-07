@@ -169,7 +169,6 @@ const ScheduleView: React.FC<{
     ipcRenderer.send({ channel: IpcMessage.SaveSchedule, param: schedule })
   }
 
-  console.log(MAX_WIDTH)
   return (
     <TaskViewContainer>
       <ScheduleInput
