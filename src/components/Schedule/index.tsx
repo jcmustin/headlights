@@ -13,7 +13,6 @@ import {
 } from './styles'
 import { TaskViewContainer } from '../shared/styles'
 import IpcMessage from '../../constants/ipcMessage'
-import Mousetrap from 'mousetrap'
 import { createIpcRendererInterface } from '../../utils/IpcInterface'
 
 const MIN_WIDTH = 270
@@ -73,7 +72,6 @@ const ScheduleView: React.FC<{
 
   useEffect(() => {
     return () => {
-      onSaveSchedule()
       let e = new Event('componentUnmount')
       document.dispatchEvent(e)
     }
@@ -111,7 +109,7 @@ const ScheduleView: React.FC<{
     return () => {
       document.removeEventListener('componentUnmount', onSaveSchedule)
     }
-  }, [sizeReference])
+  }, [schedule])
 
   const onScheduleChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     const newSchedule = event.target.value
