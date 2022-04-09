@@ -55,15 +55,17 @@ export const createAppState = (rawSchedule?: string): AppState => {
       const { activeTask: cachedActiveTask } = this
       this.updateActiveTask()
       const { activeTask: currentActiveTask } = this
+      console.log(cachedActiveTask, currentActiveTask)
       if (!cachedActiveTask) return
-      if (
-        cachedActiveTask.name !== currentActiveTask?.name ||
-        cachedActiveTask.duration !== currentActiveTask?.duration
-      ) {
+      if (!currentActiveTask?.is(cachedActiveTask)) {
+        console.log('!==')
         schedule.insertBeforeActive(cachedActiveTask)
+        cachedActiveTask.endTime = DateTime.now()
+        cachedActiveTask.status = status
+      } else {
+        currentActiveTask.endTime = DateTime.now()
+        currentActiveTask.status = status
       }
-      cachedActiveTask.endTime = DateTime.now()
-      cachedActiveTask.status = status
       this.updateActiveTask()
     },
     updateSchedule(rawSchedule: string) {

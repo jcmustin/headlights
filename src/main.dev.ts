@@ -33,7 +33,6 @@ import { createTask, TaskData } from './models/Task'
 import { createAppState } from './AppState'
 import { createIpcMainInterface } from './utils/IpcInterface'
 import { Status } from './constants/status'
-import { SaveScheduleButton } from './components/Schedule/styles'
 
 const DATA_FILE_PATH = `../log/${new Date().toISOString().slice(0, 10)}.txt`
 

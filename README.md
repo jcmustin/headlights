@@ -12,13 +12,15 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 ## To Dos
 
 ### High
-- Focus window on task/schedule view on mac
+- Fix schedule bug on timer view
+- Fix slowdown issue
 - Fix 0.1 =/= .1 issue
 - Fix "StartTime.toFormat is not a function"
 
 ### Med
 
 - Add electron-store
+- Focus window on task/schedule view on mac
 - Modify style of completed tasks (strikethrough?)
 - reconsider [ ] notation. I don't know that it's needed.
 - Allow modifying schedule while task running

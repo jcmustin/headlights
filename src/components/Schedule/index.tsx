@@ -2,6 +2,7 @@ import React, {
   ChangeEventHandler,
   createRef,
   UIEventHandler,
+  useCallback,
   useEffect,
   useState,
 } from 'react'
@@ -45,30 +46,32 @@ const ScheduleView: React.FC<{
 
   const ipcRenderer = createIpcRendererInterface()
 
-  const computeNewDim = (
-    width: number,
-    round: number,
-    offset: number,
-    min: number,
-  ): number => Math.max(Math.ceil(width / round) * round + offset, min)
+  const computeNewDim = useCallback(
+    (width: number, round: number, offset: number, min: number): number =>
+      Math.max(Math.ceil(width / round) * round + offset, min),
+    [],
+  )
 
-  const longestTaskLength = (schedule: string): number =>
-    Math.max(
-      ...schedule.split('\n').map((task): number => {
-        const longestTaskRaw = (task.match(/([^\|]+)(?:\s\|.*)?/) || [
-          '',
-          '',
-        ])[0]
-        return longestTaskRaw.length
-      }),
-    )
+  const longestTaskLength = useCallback(
+    (schedule: string): number =>
+      Math.max(
+        ...schedule.split('\n').map((task): number => {
+          const longestTaskRaw = (task.match(/([^\|]+)(?:\s\|.*)?/) || [
+            '',
+            '',
+          ])[0]
+          return longestTaskRaw.length
+        }),
+      ),
+    [],
+  )
 
-  const updateTabSize = () => {
+  const updateTabSize = useCallback(() => {
     const maxTaskLength = longestTaskLength(schedule)
     if (maxTaskLength > tabSize / 2 || maxTaskLength < tabSize / 2 - 10) {
       setTabsize(Math.max(maxTaskLength * 2 + 10, MIN_TAB_SIZE))
     }
-  }
+  }, [schedule, tabSize])
 
   useEffect(() => {
     return () => {
@@ -111,27 +114,30 @@ const ScheduleView: React.FC<{
     }
   }, [schedule])
 
-  const onScheduleChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
-    const newSchedule = event.target.value
-      .split('\n')
-      .map((task) =>
-        (/\t\|/.test(task) ? task : task.replace(/[^\S\t]\|/, '\t|'))
-          .replaceAll('| ', '|　')
-          .replaceAll(/\t([^\|])/g, ' $1'),
-      )
-      .join('\n')
-    const caret = event.target.selectionStart
-    ipcRenderer.send({
-      channel: IpcMessage.CueSetSchedule,
-      param: newSchedule,
-    })
-    setLocalSchedule(newSchedule)
-    updateTabSize()
-    window.requestAnimationFrame(() => {
-      event.target.selectionStart = caret
-      event.target.selectionEnd = caret
-    })
-  }
+  const onScheduleChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback(
+    (event) => {
+      const newSchedule = event.target.value
+        .split('\n')
+        .map((task) =>
+          (/\t\|/.test(task) ? task : task.replace(/[^\S\t]\|/, '\t|'))
+            .replaceAll('| ', '|　')
+            .replaceAll(/\t([^\|])/g, ' $1'),
+        )
+        .join('\n')
+      const caret = event.target.selectionStart
+      ipcRenderer.send({
+        channel: IpcMessage.CueSetSchedule,
+        param: newSchedule,
+      })
+      setLocalSchedule(newSchedule)
+      updateTabSize()
+      window.requestAnimationFrame(() => {
+        event.target.selectionStart = caret
+        event.target.selectionEnd = caret
+      })
+    },
+    [],
+  )
 
   const onBlur = () => {
     ipcRenderer.send({
@@ -145,27 +151,33 @@ const ScheduleView: React.FC<{
     setIsFocused(true)
   }
 
-  const onScrollSchedule: UIEventHandler<HTMLTextAreaElement> = (event) => {
-    window.requestAnimationFrame(() => {
-      lineNumbers.current &&
-        lineNumbers.current.scrollTo({
-          top: (event.target as HTMLTextAreaElement).scrollTop,
-        })
-    })
-  }
+  const onScrollSchedule: UIEventHandler<HTMLTextAreaElement> = useCallback(
+    (event) => {
+      window.requestAnimationFrame(() => {
+        lineNumbers.current &&
+          lineNumbers.current.scrollTo({
+            top: (event.target as HTMLTextAreaElement).scrollTop,
+          })
+      })
+    },
+    [lineNumbers],
+  )
 
-  const onScrollLineNumbers: UIEventHandler<HTMLTextAreaElement> = (event) => {
-    window.requestAnimationFrame(() => {
-      scheduleInput.current &&
-        scheduleInput.current.scrollTo({
-          top: (event.target as HTMLTextAreaElement).scrollTop,
-        })
-    })
-  }
+  const onScrollLineNumbers: UIEventHandler<HTMLTextAreaElement> = useCallback(
+    (event) => {
+      window.requestAnimationFrame(() => {
+        scheduleInput.current &&
+          scheduleInput.current.scrollTo({
+            top: (event.target as HTMLTextAreaElement).scrollTop,
+          })
+      })
+    },
+    [scheduleInput],
+  )
 
-  const onSaveSchedule = () => {
+  const onSaveSchedule = useCallback(() => {
     ipcRenderer.send({ channel: IpcMessage.SaveSchedule, param: schedule })
-  }
+  }, [schedule])
 
   return (
     <TaskViewContainer>
