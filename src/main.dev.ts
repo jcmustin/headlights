@@ -299,7 +299,7 @@ const createTray = () => {
 const registerShortcuts = () => {
   const shortcuts: { command: Electron.Accelerator; action: () => void }[] = [
     {
-      command: 'CommandOrControl+Alt+Q',
+      command: 'CommandOrControl+Alt+Shift+F12',
       action: () => {
         app.exit(0)
       },
