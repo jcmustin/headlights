@@ -3,6 +3,7 @@ import React, {
   createRef,
   UIEventHandler,
   useEffect,
+  useMemo,
   useState,
 } from 'react'
 import {
@@ -52,9 +53,9 @@ const ScheduleView: React.FC<{
     min: number,
   ): number => Math.max(Math.ceil(width / round) * round + offset, min)
 
-  const longestTaskLength = (schedule: string): number =>
+  const longestTaskLength = (schedule: string | null): number =>
     Math.max(
-      ...schedule.split('\n').map((task): number => {
+      ...(schedule || '').split('\n').map((task): number => {
         const longestTaskRaw = (task.match(/([^\|]+)(?:\s\|.*)?/) || [
           '',
           '',
@@ -63,10 +64,16 @@ const ScheduleView: React.FC<{
       }),
     )
 
-  const updateTabSize = () => {
+  const updateTabSize = (schedule: string | null) => {
+    console.log(schedule)
     const maxTaskLength = longestTaskLength(schedule)
-    if (maxTaskLength > tabSize / 2 || maxTaskLength < tabSize / 2 - 10) {
-      setTabsize(Math.max(maxTaskLength * 2 + 10, MIN_TAB_SIZE))
+    console.log('SCHEDULE', schedule)
+    console.log('MaxTaskLength:', maxTaskLength)
+    console.log('MIN', tabSize / 2)
+    console.log('MAX:', tabSize / 2 - 10)
+    console.log('NEW', maxTaskLength * 2 + 10)
+    if (maxTaskLength > tabSize / 2 - 5 || maxTaskLength < tabSize / 2 - 20) {
+      setTabsize(Math.max(maxTaskLength * 2 + 15, MIN_TAB_SIZE))
     }
   }
 
@@ -77,39 +84,43 @@ const ScheduleView: React.FC<{
     }
   }, [])
 
+  const onResize = (entries: ResizeObserverEntry[]) => {
+    // console.log(width)
+    const entry = entries[0]
+    const { width: newWidth, height: newHeight } = entry.contentRect
+    // console.log(newWidth, newHeight)
+    const computedNewWidth = computeNewDim(newWidth, ROUND, 0, MIN_WIDTH)
+    const computedNewHeight = computeNewDim(newHeight, ROUND, 0, MIN_WIDTH)
+    if (Math.abs(width - computedNewWidth) > EPSILON) {
+      setWidth(Math.min(computedNewWidth, MAX_WIDTH))
+    }
+    if (Math.abs(height - computedNewHeight) > EPSILON) {
+      setHeight(Math.min(computedNewHeight, MAX_HEIGHT))
+    }
+    if (
+      (newHeight > MAX_HEIGHT || newWidth > MAX_WIDTH) &&
+      fontSize !== MIN_FONT_SIZE
+    ) {
+      setFontSize(Math.max(fontSize * 0.95, MIN_FONT_SIZE))
+    } else if (
+      newHeight < MAX_HEIGHT * 0.75 &&
+      newWidth < MAX_WIDTH * 0.75 &&
+      fontSize !== DEFAULT_FONT_SIZE
+    ) {
+      setFontSize(Math.min(fontSize / 0.95, DEFAULT_FONT_SIZE))
+    }
+    updateTabSize(entry.target?.textContent)
+  }
+
   useEffect(() => {
     const element = sizeReference.current
-    const observer = new ResizeObserver((entries) => {
-      const entry = entries[0]
-      const { width: newWidth, height: newHeight } = entry.contentRect
-      const computedNewWidth = computeNewDim(newWidth, ROUND, 0, MIN_WIDTH)
-      const computedNewHeight = computeNewDim(newHeight, ROUND, 0, MIN_WIDTH)
-      if (Math.abs(width - computedNewWidth) > EPSILON) {
-        setWidth(Math.min(computedNewWidth, MAX_WIDTH))
-      }
-      if (Math.abs(height - computedNewHeight) > EPSILON) {
-        setHeight(Math.min(computedNewHeight, MAX_HEIGHT))
-      }
-      if (
-        (newHeight > MAX_HEIGHT || newWidth > MAX_WIDTH) &&
-        fontSize !== MIN_FONT_SIZE
-      ) {
-        setFontSize(Math.max(fontSize * 0.95, MIN_FONT_SIZE))
-      } else if (
-        newHeight < MAX_HEIGHT * 0.75 &&
-        newWidth < MAX_WIDTH * 0.75 &&
-        fontSize !== DEFAULT_FONT_SIZE
-      ) {
-        setFontSize(Math.min(fontSize / 0.95, DEFAULT_FONT_SIZE))
-      }
-      updateTabSize()
-    })
+    const observer = new ResizeObserver(onResize)
     element && observer.observe(element)
     document.addEventListener('componentUnmount', onSaveSchedule)
     return () => {
       document.removeEventListener('componentUnmount', onSaveSchedule)
     }
-  }, [schedule])
+  }, [])
 
   const onScheduleChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     const newSchedule = event.target.value
@@ -126,12 +137,22 @@ const ScheduleView: React.FC<{
       param: newSchedule,
     })
     setLocalSchedule(newSchedule)
-    updateTabSize()
+    updateTabSize(newSchedule)
     window.requestAnimationFrame(() => {
       event.target.selectionStart = caret
       event.target.selectionEnd = caret
     })
   }
+
+  const style = useMemo(() => {
+    return {
+      ['--schedule-font-size' as any]: `${fontSize}rem`,
+      ['--schedule-tab-size' as any]: tabSize,
+      ['--schedule-width' as any]: `${width}px`,
+      ['--schedule-height' as any]: `${height}px`,
+      ['--schedule-max-height' as any]: `${MAX_HEIGHT}px`,
+    }
+  }, [fontSize, tabSize, width, height])
 
   const onBlur = () => {
     ipcRenderer.send({
@@ -168,7 +189,7 @@ const ScheduleView: React.FC<{
   }
 
   return (
-    <TaskViewContainer>
+    <TaskViewContainer style={style}>
       <ScheduleInput
         autoFocus
         spellCheck={false}
@@ -179,19 +200,11 @@ const ScheduleView: React.FC<{
         onFocus={onFocus}
         onBlur={onBlur}
         value={schedule}
-        widthInPx={width}
-        heightInPx={height}
-        tabSize={tabSize}
-        maxHeight={MAX_HEIGHT}
         className="mousetrap"
-        fontSize={fontSize}
       />
       {/* the added space on the following line prevents the pre tag from discarding the last line break. */}
       <LineNumbers
-        widthInPx={width}
-        heightInPx={height}
         ref={lineNumbers}
-        maxHeight={MAX_HEIGHT}
         scheduleEmpty={schedule.length === 0}
         value={schedule
           .split('\n')
@@ -199,14 +212,9 @@ const ScheduleView: React.FC<{
           .join('\n')}
         disabled
         onScroll={onScrollLineNumbers}
-        fontSize={fontSize}
       />
-      <SizeReference tabSize={tabSize} ref={sizeReference} fontSize={fontSize}>
-        {schedule}{' '}
-      </SizeReference>
-      <SizeReference ref={spaceWidthReference} fontSize={fontSize}>
-        {' '}
-      </SizeReference>
+      <SizeReference ref={sizeReference}>{schedule} </SizeReference>
+      <SizeReference ref={spaceWidthReference}> </SizeReference>
       <SaveScheduleButton onClick={onSaveSchedule}></SaveScheduleButton>
     </TaskViewContainer>
   )

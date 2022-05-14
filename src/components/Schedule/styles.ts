@@ -52,27 +52,21 @@ const placeholderStyles = css`
   text-shadow: 0px 1.4px 0px ${opacify(-0.6, darken(0.4, UI_COLOR))};
 `
 
-export const SizeReference = styled.pre<{ tabSize?: number; fontSize: number }>`
+export const SizeReference = styled.pre`
   ${sharedStyles};
   display: inline-block;
-  tab-size: ${({ tabSize }) => tabSize};
-  font-size: ${({ fontSize }) => `${fontSize}rem`};
+  tab-size: var(--schedule-tab-size);
+  font-size: var(--schedule-font-size);
   visibility: hidden;
 `
 
-export const ScheduleInput = styled.textarea<{
-  tabSize: number
-  widthInPx: number
-  heightInPx: number
-  maxHeight: number
-  fontSize: number
-}>`
+export const ScheduleInput = styled.textarea`
   ${textAreaStyles};
-  font-size: ${({ fontSize }) => `${fontSize}rem`};
-  tab-size: ${({ tabSize }) => tabSize};
-  width: ${(props) => props.widthInPx}px;
-  height: ${(props) => props.heightInPx}px;
-  max-height: ${({ maxHeight }) => maxHeight}px;
+  font-size: var(--schedule-font-size);
+  tab-size: var(--schedule-tab-size);
+  width: var(--schedule-width);
+  height: var(--schedule-height);
+  max-height: var(--schedule-max-height);
   &::placeholder {
     ${placeholderStyles};
   }
@@ -100,24 +94,20 @@ export const SaveScheduleButton = styled.button`
 `
 
 export const LineNumbers = styled.textarea<{
-  widthInPx: number
-  heightInPx: number
-  maxHeight: number
   scheduleEmpty: boolean
-  fontSize: number
 }>`
   ${textAreaStyles};
   ${({ scheduleEmpty }) => scheduleEmpty && placeholderStyles};
-  font-size: ${({ fontSize }) => `${fontSize}rem`};
+  font-size: var(--schedule-font-size);
   user-select: none;
   transform: translateX(calc(-50% - 220px));
   transition: width 0.2s, height 0.2s;
   z-index: -1;
   text-align: right;
   white-space: pre-wrap;
-  padding-right: ${(props) => props.widthInPx}px;
-  height: ${(props) => props.heightInPx}px;
-  max-height: ${({ maxHeight }) => maxHeight}px;
+  padding-right: var(--schedule-width);
+  height: var(--schedule-height);
+  max-height: var(--schedule-max-height);
   ::-webkit-scrollbar {
     display: none;
   }

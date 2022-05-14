@@ -12,9 +12,7 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 ## To Dos
 
 ### High
-- Fix schedule bug on timer view
-- Fix slowdown issue
-- Fix 0.1 =/= .1 issue
+ Fix 0.1 =/= .1 issue
 - Fix "StartTime.toFormat is not a function"
 
 ### Med
@@ -22,6 +20,8 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 - Add electron-store
 - Focus window on task/schedule view on mac
 - Modify style of completed tasks (strikethrough?)
+- resizeObserver is still probably being called too often, but not critically.
+- also animating width is apparently non-performant, consider looking into that.
 - reconsider [ ] notation. I don't know that it's needed.
 - Allow modifying schedule while task running
 - Save to file
@@ -66,7 +66,10 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 - ~~task start should add to schedule~~
 - ~~bug: task end checks off next task~~
 - ~~Fix time erasure~~
-- Fix Type Error
+- ~~Fix schedule bug on timer view~~
+- ~~Fix Type Error~~
+- ~~Fix slowdown issue ~~
+  - ~~speed up serializeStyles in emotion? or call resizeObserver less often?~~
 
 ## User Journey
 
