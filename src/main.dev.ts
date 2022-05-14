@@ -338,7 +338,6 @@ const registerShortcuts = () => {
     if (!ret) {
       console.log('registration failed')
     }
-    console.log(globalShortcut.isRegistered(task.command))
   })
 }
 

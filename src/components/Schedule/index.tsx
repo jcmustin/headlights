@@ -65,13 +65,7 @@ const ScheduleView: React.FC<{
     )
 
   const updateTabSize = (schedule: string | null) => {
-    console.log(schedule)
     const maxTaskLength = longestTaskLength(schedule)
-    console.log('SCHEDULE', schedule)
-    console.log('MaxTaskLength:', maxTaskLength)
-    console.log('MIN', tabSize / 2)
-    console.log('MAX:', tabSize / 2 - 10)
-    console.log('NEW', maxTaskLength * 2 + 10)
     if (maxTaskLength > tabSize / 2 - 5 || maxTaskLength < tabSize / 2 - 20) {
       setTabsize(Math.max(maxTaskLength * 2 + 15, MIN_TAB_SIZE))
     }
@@ -85,10 +79,8 @@ const ScheduleView: React.FC<{
   }, [])
 
   const onResize = (entries: ResizeObserverEntry[]) => {
-    // console.log(width)
     const entry = entries[0]
     const { width: newWidth, height: newHeight } = entry.contentRect
-    // console.log(newWidth, newHeight)
     const computedNewWidth = computeNewDim(newWidth, ROUND, 0, MIN_WIDTH)
     const computedNewHeight = computeNewDim(newHeight, ROUND, 0, MIN_WIDTH)
     if (Math.abs(width - computedNewWidth) > EPSILON) {

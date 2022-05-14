@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import { Status } from './constants/status'
 import View from './constants/view'
 import { createSchedule, Schedule } from './models/Schedule'
-import { createTask, Task } from './models/Task'
+import { Task } from './models/Task'
 
 export type AppState = {
   view: View
@@ -55,10 +55,8 @@ export const createAppState = (rawSchedule?: string): AppState => {
       const { activeTask: cachedActiveTask } = this
       this.updateActiveTask()
       const { activeTask: currentActiveTask } = this
-      console.log(cachedActiveTask, currentActiveTask)
       if (!cachedActiveTask) return
       if (!currentActiveTask?.is(cachedActiveTask)) {
-        console.log('!==')
         schedule.insertBeforeActive(cachedActiveTask)
         cachedActiveTask.endTime = DateTime.now()
         cachedActiveTask.status = status
