@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon'
+import { Status } from '../constants/status'
 import { createTask, Task } from './Task'
 
 export type TextEntryData = {}
@@ -28,7 +29,7 @@ export const createEntry = (raw: string): Entry => {
     return createTask({
       name,
       duration,
-      status: maybeStatus,
+      status: maybeStatus as Status | undefined,
       startTime: maybeStartTime
         ? DateTime.fromFormat(maybeStartTime, 'HH:mm')
         : undefined,
