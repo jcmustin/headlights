@@ -2,6 +2,7 @@ import React, {
   ChangeEventHandler,
   createRef,
   UIEventHandler,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -72,6 +73,9 @@ const ScheduleView: React.FC<{
   }
 
   useEffect(() => {
+    const element = sizeReference.current
+    const observer = new ResizeObserver(onResize)
+    element && observer.observe(element)
     return () => {
       let e = new Event('componentUnmount')
       document.dispatchEvent(e)
@@ -105,14 +109,11 @@ const ScheduleView: React.FC<{
   }
 
   useEffect(() => {
-    const element = sizeReference.current
-    const observer = new ResizeObserver(onResize)
-    element && observer.observe(element)
     document.addEventListener('componentUnmount', onSaveSchedule)
     return () => {
       document.removeEventListener('componentUnmount', onSaveSchedule)
     }
-  }, [])
+  }, [schedule])
 
   const onScheduleChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     const newSchedule = event.target.value
@@ -146,17 +147,18 @@ const ScheduleView: React.FC<{
     }
   }, [fontSize, tabSize, width, height])
 
-  const onBlur = () => {
+  const onBlur = useCallback(() => {
     ipcRenderer.send({
       channel: IpcMessage.CueSetSchedule,
       param: localSchedule,
     })
     setIsFocused(false)
-  }
-  const onFocus = () => {
+  }, [localSchedule])
+
+  const onFocus = useCallback(() => {
     setLocalSchedule(globalSchedule)
     setIsFocused(true)
-  }
+  }, [globalSchedule])
 
   const onScrollSchedule: UIEventHandler<HTMLTextAreaElement> = (event) => {
     window.requestAnimationFrame(() => {
@@ -176,9 +178,10 @@ const ScheduleView: React.FC<{
     })
   }
 
-  const onSaveSchedule = () => {
+  const onSaveSchedule = useCallback(() => {
+    console.log('saveSchedule', schedule)
     ipcRenderer.send({ channel: IpcMessage.SaveSchedule, param: schedule })
-  }
+  }, [schedule])
 
   return (
     <TaskViewContainer style={style}>
