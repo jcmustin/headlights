@@ -16,7 +16,7 @@ export const isTaskEntry = (entry: Entry): entry is Task => 'name' in entry
 
 export const createEntry = (raw: string): Entry => {
   const taskPattern =
-    /(?:\[(?<status>.*)\])?\s*(?<name>[^\|]+)\s+\|\s+(?<duration>\d*\.?\d+)(?:\s+(?<startTime>\d{2}:\d{2}).(?<endTime>\d{2}:\d{2}))?/
+    /(?:\[(?<status>.*)\])?\s*(?<name>[^\t]+)\t(?<duration>\d*\.?\d+)(?:\s+(?<startTime>\d{2}:\d{2}).(?<endTime>\d{2}:\d{2}))?/
   const taskMatch = taskPattern.exec(raw)
   if (taskMatch && taskMatch.groups) {
     const {

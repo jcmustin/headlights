@@ -46,7 +46,7 @@ export const createTask = (
   let endTime: DateTime | undefined = maybeEndTime
   const isComplete = () => status && status !== Status.Incomplete
   const getUpdatedRaw = () =>
-    `${isComplete() ? `[${status}] ` : ''}${name}\t|　${duration}${
+    `${isComplete() ? `[${status}] ` : ''}${name}\t${duration}${
       startTime && endTime
         ? `　${startTime.toFormat('HH:mm')}—${endTime.toFormat('HH:mm')}`
         : ''

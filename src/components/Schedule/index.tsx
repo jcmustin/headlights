@@ -1,6 +1,7 @@
 import React, {
   ChangeEventHandler,
   createRef,
+  KeyboardEventHandler,
   UIEventHandler,
   useCallback,
   useEffect,
@@ -17,7 +18,7 @@ import { TaskViewContainer } from '../shared/styles'
 import IpcMessage from '../../constants/ipcMessage'
 import { createIpcRendererInterface } from '../../utils/IpcInterface'
 
-const MIN_WIDTH = 270
+const MIN_WIDTH = 400
 const MIN_HEIGHT = 220
 const SIDE_MARGIN = 200
 const TOP_MARGIN = 100
@@ -57,10 +58,7 @@ const ScheduleView: React.FC<{
   const longestTaskLength = (schedule: string | null): number =>
     Math.max(
       ...(schedule || '').split('\n').map((task): number => {
-        const longestTaskRaw = (task.match(/([^\|]+)(?:\s\|.*)?/) || [
-          '',
-          '',
-        ])[0]
+        const longestTaskRaw = (task.match(/([^\t]+\t)/) || ['', ''])[0]
         return longestTaskRaw.length
       }),
     )
@@ -117,13 +115,6 @@ const ScheduleView: React.FC<{
 
   const onScheduleChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
     const newSchedule = event.target.value
-      .split('\n')
-      .map((task) =>
-        (/\t\|/.test(task) ? task : task.replace(/[^\S\t]\|/, '\t|'))
-          .replaceAll('| ', '|　')
-          .replaceAll(/\t([^\|])/g, ' $1'),
-      )
-      .join('\n')
     const caret = event.target.selectionStart
     ipcRenderer.send({
       channel: IpcMessage.CueSetSchedule,
@@ -179,9 +170,35 @@ const ScheduleView: React.FC<{
   }
 
   const onSaveSchedule = useCallback(() => {
-    console.log('saveSchedule', schedule)
     ipcRenderer.send({ channel: IpcMessage.SaveSchedule, param: schedule })
   }, [schedule])
+
+  const onKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
+    if (event.key === 'Tab') {
+      event.preventDefault()
+      const { currentTarget: scheduleInput } = event
+      var start = scheduleInput.selectionStart
+      var end = scheduleInput.selectionEnd
+
+      // set textarea value to: text before caret + tab + text after caret
+      const newValue =
+        scheduleInput.value.substring(0, start) +
+        '\t' +
+        scheduleInput.value.substring(end)
+
+      const setValue = Object.getOwnPropertyDescriptor(
+        window.HTMLTextAreaElement.prototype,
+        'value',
+      )?.set
+      const newEvent = new Event('input', {
+        bubbles: true,
+      })
+      // put caret at right position again
+      scheduleInput.selectionStart = scheduleInput.selectionEnd = start + 1
+      setValue?.call(scheduleInput, newValue)
+      scheduleInput.dispatchEvent(newEvent)
+    }
+  }
 
   return (
     <TaskViewContainer style={style}>
@@ -189,7 +206,8 @@ const ScheduleView: React.FC<{
         autoFocus
         spellCheck={false}
         ref={scheduleInput}
-        placeholder="task | duration"
+        placeholder={'task\tduration'}
+        onKeyDown={onKeyDown}
         onChange={onScheduleChange}
         onScroll={onScrollSchedule}
         onFocus={onFocus}
