@@ -251,7 +251,7 @@ const createWindows = async () => {
   })
 
   screen.on('display-removed', (_, oldDisplay) => {
-    windows[oldDisplay.id].close()
+    windows[oldDisplay.id].destroy()
     delete windows[oldDisplay.id]
   })
 
@@ -289,7 +289,7 @@ const createTray = () => {
     {
       label: 'Exit',
       click() {
-        app.quit()
+        app.exit()
       },
     },
   ])
@@ -299,9 +299,9 @@ const createTray = () => {
 const registerShortcuts = () => {
   const shortcuts: { command: Electron.Accelerator; action: () => void }[] = [
     {
-      command: 'CommandOrControl+Alt+Shift+F12',
+      command: 'CommandOrControl+Alt+Shift+Q',
       action: () => {
-        app.exit(0)
+        app.relaunch()
       },
     },
     {
