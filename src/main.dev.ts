@@ -263,6 +263,7 @@ const createWindows = async () => {
 /**
  * Add event listeners...
  */
+app.requestSingleInstanceLock()
 
 app.once('window-all-closed', () => {
   app.quit()
