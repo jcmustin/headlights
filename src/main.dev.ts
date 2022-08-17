@@ -199,6 +199,7 @@ const createWindow: (display: Display) => BrowserWindow = (display) => {
   window.setResizable(true)
   window.setSize(display.size.width, display.size.height)
   window.setResizable(false)
+  window.setVisibleOnAllWorkspaces(true)
 
   window.loadURL(`file://${__dirname}/index.html`)
 
