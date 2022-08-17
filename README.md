@@ -28,8 +28,7 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 - disable `nodeIntegration`, enable `contextIsolation`, add `preload.js`
 - profile performance: <https://www.electronjs.org/docs/latest/tutorial/performance>
 - `yarn add use-error-boundary`: <https://github.com/JoschuaSchneider/use-error-boundary>
-- Show on all spaces in Mac
-- Allow switching between daysß
+- Allow switching between days
 - Specify successful vs unsuccessful
   - add two shortcuts
 - Refactor ipc message code
@@ -44,7 +43,7 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 - Show next task on task entry view
 - schedule doesn't resize width down on delete.
 
-### Maybeß
+### Maybe
 
 - Add task priorities + sort by priority?
 - Allow time-of-day tasks?
@@ -69,8 +68,8 @@ Headlights is a tool for staying focused. It's a pomodoro timer with a strict ta
 - ~~Fix schedule bug on timer view~~
 - ~~Fix Type Error~~
 - ~~Fix slowdown issue ~~
-  - ~~speed up serializeStyles in emotion? or call resizeObserver less often?~~
-
+- ~~speed up serializeStyles in emotion? or call resizeObserver less often?~~
+- ~~Show on all spaces in Mac~~
 ## User Journey
 
 - user starts application.
