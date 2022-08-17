@@ -247,12 +247,26 @@ const createWindows = async () => {
   })
 
   screen.on('display-added', (_, newDisplay) => {
+    Object.entries(windows).forEach(([displayId, window]) => {
+      const display = screen
+        .getAllDisplays()
+        .filter((display) => display.id.toString() === displayId)[0]
+      display && window.setBounds(display.bounds)
+    })
+    if (windows[newDisplay.id]) return
     windows[newDisplay.id] = createWindow(newDisplay)
   })
 
   screen.on('display-removed', (_, oldDisplay) => {
-    windows[oldDisplay.id].destroy()
+    const window = windows[oldDisplay.id]
+    window.destroy()
     delete windows[oldDisplay.id]
+    Object.entries(windows).forEach(([displayId, window]) => {
+      const display = screen
+        .getAllDisplays()
+        .filter((display) => display.id.toString() === displayId)[0]
+      display && window.setBounds(display.bounds)
+    })
   })
 
   // Remove this if your app does not use auto updates
