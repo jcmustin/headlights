@@ -9,7 +9,8 @@ export const FADE_IN_DURATION = 1
 export const CSS_ANIMATION_CORRECTION_FACTOR = 1
 
 /** styles */
-const BASE_COLOR = '#541130' //'#761240'
+// dark mode: const BASE_COLOR = '#541130' //'#761240'
+const BASE_COLOR = '#00ddff' //'#761240'
 export const PRIMARY_COLOR = BASE_COLOR
 export const SECONDARY_COLOR = '#fb0'
 export const UI_COLOR = '#fff' //lighten(0.55, PRIMARY_COLOR)
