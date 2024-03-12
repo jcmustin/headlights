@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import IpcMessage from '../../constants/ipcMessage'
 import useInterval from '../../utils/useInterval'
 import { Progress, TaskTitle } from './styles'
@@ -9,21 +9,27 @@ import {
 } from '../../constants/constants'
 import { TaskViewContainer } from '../shared/styles'
 import { createIpcRendererInterface } from '../../utils/IpcInterface'
+import { DateTime } from 'luxon'
 
-const Timer = ({ duration, name }: { duration: number; name: string }) => {
-  const [taskProgress, setProgress] = useState(0)
-  const [cooldownProgress, setCooldownProgress] = useState(0)
+const Timer = ({ durationInMinutes, name }: { durationInMinutes: number; name: string }) => {
+  const [startTime] = useState(DateTime.now())
+  const [taskProgress, setTaskProgress] = useState(0)
+  const [cooldownStart, setCooldownStart] = useState<DateTime | undefined>(undefined)
 
   const ipcRenderer = createIpcRendererInterface()
 
+
   useInterval(() => {
-    setProgress(Math.min(duration * TICKS_PER_SECOND * 60, taskProgress + 1))
-    if (taskProgress >= duration * TICKS_PER_SECOND * 60) {
-      setCooldownProgress(cooldownProgress + 1)
-      if (cooldownProgress >= COOLDOWN_DURATION * TICKS_PER_SECOND) {
+    const now = DateTime.now()
+    setTaskProgress(Math.floor(now.diff(startTime, 'seconds').seconds * TICKS_PER_SECOND))
+    if (taskProgress >= durationInMinutes * 60 * TICKS_PER_SECOND) {
+      if (!cooldownStart) {
+        setCooldownStart(now)
+      }
+      else if (now.diff(cooldownStart, 'seconds').seconds > COOLDOWN_DURATION) {
         ipcRenderer.send({
           channel: IpcMessage.EndTask,
-          param: { name, duration },
+          param: { name, duration: durationInMinutes },
         })
       }
     }
@@ -32,12 +38,12 @@ const Timer = ({ duration, name }: { duration: number; name: string }) => {
   return (
     <>
       <Progress
-        isComplete={cooldownProgress > 0}
+        isComplete={cooldownStart !== undefined}
         value={taskProgress}
-        max={duration * TICKS_PER_SECOND * 60}
+        max={durationInMinutes * 60 * TICKS_PER_SECOND}
       />
       <TaskTitle>{name}</TaskTitle>
-      {cooldownProgress > 0 && (
+      {cooldownStart && (
         <TaskViewContainer
           fadeInDuration={COOLDOWN_DURATION * CSS_ANIMATION_CORRECTION_FACTOR}
         />

@@ -64,7 +64,7 @@ export default function App() {
       )}
       {scheduleOpen && <ScheduleView schedule={schedule} />}
       {currentView === View.Timer && (
-        <TimerView duration={activeTask.duration} name={activeTask.name} />
+        <TimerView durationInMinutes={activeTask.duration} name={activeTask.name} />
       )}
     </>
   )
