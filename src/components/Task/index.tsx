@@ -78,13 +78,13 @@ const TaskView: React.FC<{
           disabled
         />
       </InputContainer>
-      <StartTaskButton
+      {/* <StartTaskButton
         type="submit"
         disabled={!name || !duration}
         onClick={onStartTask}
       >
         Start
-      </StartTaskButton>
+      </StartTaskButton> */}
     </TaskViewContainer>
   )
 }

@@ -231,7 +231,7 @@ const ScheduleView: React.FC<{
       />
       <SizeReference ref={sizeReference}>{schedule} </SizeReference>
       <SizeReference ref={spaceWidthReference}> </SizeReference>
-      <SaveScheduleButton onClick={onSaveSchedule}></SaveScheduleButton>
+      {/* <SaveScheduleButton onClick={onSaveSchedule}></SaveScheduleButton> */}
     </TaskViewContainer>
   )
 }
