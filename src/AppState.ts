@@ -7,7 +7,7 @@ import { Task } from './models/Task'
 
 export type AppState = {
   view: View
-  scheduleActive: boolean
+  isScheduleOpen: boolean
   schedule: Schedule
   activeDay: Date
   activeTask: Task | undefined
@@ -30,10 +30,10 @@ export const createAppState = (rawSchedule?: string): AppState => {
     set view(newView: View) {
       view = newView
     },
-    get scheduleActive() {
+    get isScheduleOpen() {
       return scheduleActive
     },
-    set scheduleActive(newScheduleActive: boolean) {
+    set isScheduleOpen(newScheduleActive: boolean) {
       scheduleActive = newScheduleActive
     },
     get schedule() {

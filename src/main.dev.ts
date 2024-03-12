@@ -30,7 +30,7 @@ import MenuBuilder from './menu'
 import IpcMessage from './constants/ipcMessage'
 import View from './constants/view'
 import { createTask, TaskData } from './models/Task'
-import { createAppState } from './AppState'
+import { AppState, createAppState } from './AppState'
 import { createIpcMainInterface } from './utils/IpcInterface'
 import { Status } from './constants/status'
 
@@ -127,17 +127,33 @@ ipcMain.on({
 })
 
 ipcMain.on({
-  channel: IpcMessage.CueSetScheduleActive,
+  channel: IpcMessage.CueSetScheduleOpen,
   callback: async (_) => {
-    appState.scheduleActive = !appState.scheduleActive
+    appState.isScheduleOpen = !appState.isScheduleOpen
     if (appState.view === View.Timer) {
       Object.values(windows).forEach((window) =>
-        window.setIgnoreMouseEvents(!appState.scheduleActive),
+        window.setIgnoreMouseEvents(!appState.isScheduleOpen),
       )
     }
     ipcMain.send({
-      channel: IpcMessage.SetScheduleActive,
-      param: appState.scheduleActive,
+      channel: IpcMessage.SetScheduleOpen,
+      param: appState.isScheduleOpen,
+    })
+  },
+})
+
+ipcMain.on({
+  channel: IpcMessage.CueHydrate,
+  callback: (_) => {
+    const { schedule, activeTask, view, isScheduleOpen } = appState
+    ipcMain.send({
+      channel: IpcMessage.Hydrate,
+      param: {
+        rawSchedule: schedule.toString(),
+        isScheduleOpen,
+        view,
+        activeTaskData: activeTask?.serialize(),
+      },
     })
   },
 })
@@ -200,6 +216,7 @@ const createWindow: (display: Display) => BrowserWindow = (display) => {
   window.setSize(display.size.width, display.size.height)
   window.setResizable(false)
   window.setVisibleOnAllWorkspaces(true)
+  window.setIgnoreMouseEvents(appState.view === View.Timer)
 
   window.loadURL(`file://${__dirname}/index.html`)
 
@@ -345,7 +362,7 @@ const registerShortcuts = () => {
     {
       command: 'Alt+S',
       action: () => {
-        ipcMain.emit({ channel: IpcMessage.CueSetScheduleActive })
+        ipcMain.emit({ channel: IpcMessage.CueSetScheduleOpen })
       },
     },
   ]
