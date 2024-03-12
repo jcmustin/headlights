@@ -193,10 +193,13 @@ const ScheduleView: React.FC<{
       const newEvent = new Event('input', {
         bubbles: true,
       })
-      // put caret at right position again
-      scheduleInput.selectionStart = scheduleInput.selectionEnd = start + 1
       setValue?.call(scheduleInput, newValue)
       scheduleInput.dispatchEvent(newEvent)
+
+      // put caret at correct position again
+      // TODO: something happens after this that moves the cursor back to the end position.
+      // It triggers with a resize as well. If you set a breakpoint at this line, it's ~25 steps forward.
+      scheduleInput.selectionStart = scheduleInput.selectionEnd = start + 1
     }
   }
 
