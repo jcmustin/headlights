@@ -34,28 +34,40 @@ export const createTask = (
     startTime: maybeStartTime,
     endTime: maybeEndTime,
   }: TaskData = {
-    name: '',
-    duration: 0,
-    status: Status.Incomplete,
-    startTime: undefined,
-    endTime: undefined,
-  },
+      name: '',
+      duration: 0,
+      status: Status.Incomplete,
+      startTime: undefined,
+      endTime: undefined,
+    },
 ): Task => {
   let status = isStatus(maybeStatus) ? maybeStatus : Status.Incomplete
   let startTime: DateTime | undefined = maybeStartTime
   let endTime: DateTime | undefined = maybeEndTime
   const isComplete = () => status && status !== Status.Incomplete
   const getUpdatedRaw = () =>
-    `${isComplete() ? `[${status}] ` : ''}${name}\t${duration}${
-      startTime && endTime
-        ? `　${startTime.toFormat('HH:mm')}—${endTime.toFormat('HH:mm')}`
-        : ''
+    `${isComplete() ? `[${status}] ` : ''}${name}\t${duration}${startTime && endTime
+      ? `　${startTime.toFormat('HH:mm')}—${endTime.toFormat('HH:mm')}`
+      : ''
     }`
   let raw = maybeRaw ? maybeRaw : getUpdatedRaw()
   return {
     raw,
-    name,
-    duration: typeof duration === 'string' ? parseFloat(duration) : duration,
+    get name() {
+      return name
+    },
+    set name(newName: string) {
+      name = newName
+      raw = getUpdatedRaw()
+    },
+    get duration(): number {
+      duration = typeof duration === 'string' ? parseFloat(duration) : duration
+      return duration
+    },
+    set duration(newDuration: string | number) {
+      duration = typeof newDuration === 'string' ? parseFloat(newDuration) : newDuration
+      raw = getUpdatedRaw()
+    },
     get status() {
       return status
     },
