@@ -56,7 +56,6 @@ export const TaskTitle = styled.div`
   font-weight: bold;
   ${FONT_STYLE};
   text-align: center;
-  opacity: ;
   box-shadow: 0px 3px 0px #0003;
   font-size: 1.8em;
   position: fixed;
@@ -64,11 +63,14 @@ export const TaskTitle = styled.div`
   background: #2226;
   border-radius: 3px;
   border-top: none;
-  top: 0;
-  margin: 0.75em 0 0;
+  top: 39px;
   padding: 0.1em 0.5em;
   transform: translateX(-50%);
-  &:hover: {
+  &:hover {
     background: #0000;
+  }
+  transition: opacity 0.3s ease;
+  &:hover {
+    opacity: 0.0;
   }
 `
