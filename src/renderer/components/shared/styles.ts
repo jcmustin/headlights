@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import { darken, opacify } from 'polished'
 import { PRIMARY_COLOR } from '../../../constants/constants'
 import milkyWay from '../../../../assets/milky-way.jpg'
-import day from '../../../../assets/day.jpg'
+import day from '../../../../assets/day.png'
 
 const fadeInKeyframes = keyframes`
   0% {
