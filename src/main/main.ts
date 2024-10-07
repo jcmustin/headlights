@@ -41,6 +41,8 @@ export default class AppUpdater {
     log.transports.file.level = 'info'
     autoUpdater.logger = log
     autoUpdater.checkForUpdatesAndNotify()
+    console.log = log.info.bind(log)
+    console.error = log.error.bind(log)
   }
 }
 
@@ -318,7 +320,7 @@ app.once('before-quit', () => {
 let tray
 
 const createTray = () => {
-  const iconPath = path.join(__dirname, '../../assets/icons/16x16.png')
+  const iconPath = path.join(__dirname, '../../../assets/icons/16x16.png')
   tray = new Tray(iconPath)
   const menu = Menu.buildFromTemplate([
     {
@@ -371,24 +373,36 @@ const registerShortcuts = () => {
   shortcuts.forEach((task) => {
     const ret = globalShortcut.register(task.command, task.action)
     if (!ret) {
-      console.log('registration failed')
+      console.log(`Registration failed for shortcut: ${task.command}`)
+    } else {
+      console.log(`Shortcut registered successfully: ${task.command}`)
     }
   })
+
+  // Add a check to see if shortcuts are registered
+  console.log('Registered shortcuts:', globalShortcut.isRegistered('Alt+space'))
 }
 
 app
   .whenReady()
-  .then(createWindows)
-  .then(createTray)
-  .then(registerShortcuts)
-  .catch(console.log)
-
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (Object.keys(windows).length === 0) createWindows()
-})
+  .then(() => {
+    console.log('creating!')
+    createWindows()
+    createTray()
+    app.on('activate', () => {
+      if (Object.keys(windows).length === 0) createWindows()
+    })
+  })
+  .then(() => {
+    console.log('registering!')
+    // Delay registering shortcuts
+    setTimeout(registerShortcuts, 1000)
+  })
+  .catch((error) => {
+    console.log(error)
+  })
 
 app.on('will-quit', () => {
-  globalShortcut.unregister('CommandOrControl+Alt+Q')
+  // Unregister all shortcuts
+  globalShortcut.unregisterAll()
 })
