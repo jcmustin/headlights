@@ -137,10 +137,10 @@ const ScheduleView: React.FC<{
       <LineNumbers
         ref={lineNumbers}
         scheduleEmpty={schedule.length === 0}
-        value={schedule
+        value={useMemo(() => schedule
           .split('\n')
           .map((_, i) => `${i + 1}.`)
-          .join('\n')}
+          .join('\n'), [schedule])}
         disabled
         onScroll={onScrollLineNumbers}
       />
