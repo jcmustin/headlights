@@ -93,32 +93,20 @@ const ScheduleView: React.FC<{
     if (event.key === 'Tab') {
       event.preventDefault()
       const { currentTarget: scheduleInput } = event
-      var start = scheduleInput.selectionStart
-      var end = scheduleInput.selectionEnd
-
-      // set textarea value to: text before caret + tab + text after caret
-      const newValue =
-        scheduleInput.value.substring(0, start) +
-        '\t' +
-        scheduleInput.value.substring(end)
-
-      const setValue = Object.getOwnPropertyDescriptor(
-        window.HTMLTextAreaElement.prototype,
-        'value',
-      )?.set
-      const newEvent = new Event('input', {
-        bubbles: true,
-      })
-      setValue?.call(scheduleInput, newValue)
-      scheduleInput.dispatchEvent(newEvent)
-
-      // put caret at correct position again
-      // TODO: something happens after this that moves the cursor back to the end position.
-      // If you set a breakpoint at this line, it's ~25 steps forward.
-      scheduleInput.selectionStart = scheduleInput.selectionEnd = start + 1
+      const start = scheduleInput.selectionStart
+      const end = scheduleInput.selectionEnd
+      const currentLine = scheduleInput.value.split('\n').find((_, index, array) => 
+        array.slice(0, index + 1).join('\n').length >= start
+      ) || ''
+      
+      if (!currentLine.includes('\t')) {
+        const newValue = scheduleInput.value.substring(0, start) + '\t' + scheduleInput.value.substring(end)
+        setLocalSchedule(newValue)
+        scheduleInput.value = newValue
+        scheduleInput.selectionStart = scheduleInput.selectionEnd = start + 1
+      }
     }
   }
-
   return (
     <TaskViewContainer>
       <ScheduleInput
