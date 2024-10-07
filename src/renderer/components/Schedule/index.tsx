@@ -25,8 +25,6 @@ const MAX_WIDTH = document.documentElement.clientWidth - SIDE_MARGIN
 const MAX_HEIGHT = document.documentElement.clientHeight - TOP_MARGIN
 const EPSILON = 10
 const MIN_TAB_SIZE = 40
-const DEFAULT_FONT_SIZE = 2
-const MIN_FONT_SIZE = 1.3
 
 const ROUND = 150
 const ScheduleView: React.FC<{
@@ -35,7 +33,6 @@ const ScheduleView: React.FC<{
   const [width, setWidth] = useState(MIN_WIDTH)
   const [height, setHeight] = useState(MIN_HEIGHT)
   const [tabSize, setTabsize] = useState(MIN_TAB_SIZE)
-  const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE)
   const [localSchedule, setLocalSchedule] = useState(globalSchedule)
   const [isFocused, setIsFocused] = useState(false)
   const schedule = isFocused ? localSchedule : globalSchedule
@@ -95,18 +92,6 @@ const ScheduleView: React.FC<{
     if (Math.abs(height - computedNewHeight) > EPSILON) {
       setHeight(Math.min(computedNewHeight, MAX_HEIGHT))
     }
-    if (
-      (newHeight > MAX_HEIGHT || newWidth > MAX_WIDTH) &&
-      fontSize !== MIN_FONT_SIZE
-    ) {
-      setFontSize(Math.max(fontSize * 0.95, MIN_FONT_SIZE))
-    } else if (
-      newHeight < MAX_HEIGHT * 0.75 &&
-      newWidth < MAX_WIDTH * 0.75 &&
-      fontSize !== DEFAULT_FONT_SIZE
-    ) {
-      setFontSize(Math.min(fontSize / 0.95, DEFAULT_FONT_SIZE))
-    }
     updateTabSize(entry.target?.textContent)
   }
 
@@ -136,13 +121,12 @@ const ScheduleView: React.FC<{
 
   const style = useMemo(() => {
     return {
-      ['--schedule-font-size' as any]: `${fontSize}rem`,
       ['--schedule-tab-size' as any]: tabSize,
       ['--schedule-width' as any]: `${width}px`,
       ['--schedule-height' as any]: `${height}px`,
       ['--schedule-max-height' as any]: `${MAX_HEIGHT}px`,
     }
-  }, [fontSize, tabSize, width, height])
+  }, [tabSize, width, height])
 
   const onBlur = useCallback(() => {
     ipcRenderer.send({

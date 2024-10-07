@@ -23,6 +23,7 @@ export const FONT_STYLE = css`
   text-shadow: 0px 1.25px 0px ${opacify(-0.4, darken(0.1, UI_COLOR))},
     0px 2.5px 0px ${opacify(-0.4, darken(0.2, UI_COLOR))},
     ${SHADOW_STYLE};
+  font-size: 1.5rem;
 `
 
 export const FADE_IN_KEYFRAMES = keyframes`

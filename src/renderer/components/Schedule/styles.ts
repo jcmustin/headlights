@@ -56,13 +56,11 @@ export const SizeReference = styled.pre`
   ${sharedStyles};
   display: inline-block;
   tab-size: var(--schedule-tab-size);
-  font-size: var(--schedule-font-size);
   visibility: hidden;
 `
 
 export const ScheduleInput = styled.textarea`
   ${textAreaStyles};
-  font-size: var(--schedule-font-size);
   tab-size: var(--schedule-tab-size);
   width: var(--schedule-width);
   height: var(--schedule-height);
@@ -99,7 +97,6 @@ export const LineNumbers = styled.textarea<{
   ${textAreaStyles};
   ${({ scheduleEmpty }) => scheduleEmpty && placeholderStyles};
   right: unset;
-  font-size: var(--schedule-font-size);
   user-select: none;
   transform: translateX(calc(-50% - 180px));
   transition: width 0.2s, height 0.2s;
