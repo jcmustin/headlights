@@ -6,6 +6,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import {
@@ -24,6 +25,7 @@ const ScheduleView: React.FC<{
 
   const lineNumbers = createRef<HTMLTextAreaElement>()
   const scheduleInput = createRef<HTMLTextAreaElement>()
+  const scheduleRef = useRef(schedule);
 
   const ipcRenderer = {
     send: window.electron.send,
@@ -31,11 +33,14 @@ const ScheduleView: React.FC<{
   }
 
   useEffect(() => {
-    document.addEventListener('componentUnmount', onSaveSchedule)
-    return () => {
-      document.removeEventListener('componentUnmount', onSaveSchedule)
-    }
+    scheduleRef.current = schedule
   }, [schedule])
+
+  useEffect(() => {
+    return () => {
+      ipcRenderer.send({ channel: IpcMessage.SaveSchedule, param: scheduleRef.current })
+    }
+  }, [])
 
   const onScheduleChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback((event) => {
       const newSchedule = event.target.value
@@ -83,10 +88,6 @@ const ScheduleView: React.FC<{
         })
     })
   }
-
-  const onSaveSchedule = useCallback(() => {
-    ipcRenderer.send({ channel: IpcMessage.SaveSchedule, param: schedule })
-  }, [schedule])
 
   const onKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
     if (event.key === 'Tab') {
