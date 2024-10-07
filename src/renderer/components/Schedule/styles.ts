@@ -55,7 +55,7 @@ const placeholderStyles = css`
 export const ScheduleInput = styled.textarea`
   ${textAreaStyles};
   tab-size: 80;
-  width: 40vw;
+  width: 50vw;
   height: 80vh;
   &::placeholder {
     ${placeholderStyles};
@@ -95,7 +95,7 @@ export const LineNumbers = styled.textarea<{
   z-index: -1;
   text-align: right;
   white-space: pre-wrap;
-  padding-right: 40vw;
+  padding-right: 50vw;
   height: 80vh;
   ::-webkit-scrollbar {
     display: none;
