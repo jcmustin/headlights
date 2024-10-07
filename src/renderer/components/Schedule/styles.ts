@@ -52,19 +52,11 @@ const placeholderStyles = css`
   text-shadow: 0px 1.4px 0px ${opacify(-0.6, darken(0.4, UI_COLOR))};
 `
 
-export const SizeReference = styled.pre`
-  ${sharedStyles};
-  display: inline-block;
-  tab-size: var(--schedule-tab-size);
-  visibility: hidden;
-`
-
 export const ScheduleInput = styled.textarea`
   ${textAreaStyles};
-  tab-size: var(--schedule-tab-size);
-  width: var(--schedule-width);
-  height: var(--schedule-height);
-  max-height: var(--schedule-max-height);
+  tab-size: 80;
+  width: 40vw;
+  height: 80vh;
   &::placeholder {
     ${placeholderStyles};
   }
@@ -98,14 +90,13 @@ export const LineNumbers = styled.textarea<{
   ${({ scheduleEmpty }) => scheduleEmpty && placeholderStyles};
   right: unset;
   user-select: none;
-  transform: translateX(calc(-50% - 180px));
+  transform: translateX(calc(-50% - 160px));
   transition: width 0.2s, height 0.2s;
   z-index: -1;
   text-align: right;
   white-space: pre-wrap;
-  padding-right: var(--schedule-width);
-  height: var(--schedule-height);
-  max-height: var(--schedule-max-height);
+  padding-right: 40vw;
+  height: 80vh;
   ::-webkit-scrollbar {
     display: none;
   }
