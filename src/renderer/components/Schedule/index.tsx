@@ -65,12 +65,14 @@ const ScheduleView: React.FC<{
       }),
     )
 
-  const updateTabSize = (schedule: string | null) => {
-    const maxTaskLength = longestTaskLength(schedule)
-    if (maxTaskLength > tabSize / 2 - 5 || maxTaskLength < tabSize / 2 - 20) {
-      setTabsize(Math.max(maxTaskLength * 2 + 15, MIN_TAB_SIZE))
+  const updateTabSize = useMemo(() => {
+    return (schedule: string | null) => {
+      const maxTaskLength = longestTaskLength(schedule)
+      if (maxTaskLength > tabSize / 2 - 5 || maxTaskLength < tabSize / 2 - 20) {
+        setTabsize(Math.max(maxTaskLength * 2 + 15, MIN_TAB_SIZE))
+      }
     }
-  }
+  }, [schedule])
 
   useEffect(() => {
     const element = sizeReference.current
@@ -115,20 +117,22 @@ const ScheduleView: React.FC<{
     }
   }, [schedule])
 
-  const onScheduleChange: ChangeEventHandler<HTMLTextAreaElement> = (event) => {
-    const newSchedule = event.target.value
-    const caret = event.target.selectionStart
-    ipcRenderer.send({
-      channel: IpcMessage.CueSetSchedule,
-      param: newSchedule,
-    })
-    setLocalSchedule(newSchedule)
-    updateTabSize(newSchedule)
-    window.requestAnimationFrame(() => {
-      event.target.selectionStart = caret
-      event.target.selectionEnd = caret
-    })
-  }
+  const onScheduleChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback((event) => {
+      const newSchedule = event.target.value
+      const caret = event.target.selectionStart
+      ipcRenderer.send({
+        channel: IpcMessage.CueSetSchedule,
+        param: newSchedule,
+      })
+      setLocalSchedule(newSchedule)
+      updateTabSize(newSchedule)
+      window.requestAnimationFrame(() => {
+        event.target.selectionStart = caret
+        event.target.selectionEnd = caret
+      })
+    },
+    [ipcRenderer, updateTabSize],
+  );
 
   const style = useMemo(() => {
     return {
