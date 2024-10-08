@@ -185,14 +185,15 @@ const installExtensions = async () => {
     .catch(console.log)
 }
 
-const createWindow: (display: Display) => BrowserWindow = (display) => {
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets')
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'assets')
+  : path.join(__dirname, '../../assets')
 
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths)
-  }
+const getAssetPath = (...paths: string[]): string => {
+  return path.join(RESOURCES_PATH, ...paths)
+}
+
+const createWindow: (display: Display) => BrowserWindow = (display) => {
 
   let window: BrowserWindow | null = new BrowserWindow({
     x: display.bounds.x,
@@ -320,7 +321,7 @@ app.once('before-quit', () => {
 let tray
 
 const createTray = () => {
-  const iconPath = path.join(__dirname, '../../../assets/icons/16x16.png')
+  const iconPath = getAssetPath('icons/16x16.png') 
   tray = new Tray(iconPath)
   const menu = Menu.buildFromTemplate([
     {
