@@ -105,6 +105,9 @@ const ScheduleView: React.FC<{
         scheduleInput.value = newValue
         scheduleInput.selectionStart = scheduleInput.selectionEnd = start + 1
       }
+      else if(scheduleInput.value[start] === '\t') {
+        scheduleInput.selectionStart = scheduleInput.selectionEnd = start + 1
+      }
     }
   }
   return (
