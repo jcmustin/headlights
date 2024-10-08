@@ -97,6 +97,12 @@ const onEndTask = (status: Status = Status.Successful) => {
     param: appState.schedule.toString(),
   })
   setView(View.Task)
+  if (!nextActiveTask) {
+    ipcMain.send({
+      channel: IpcMessage.SetScheduleOpen,
+      param: true,
+    })
+  }
 }
 
 ipcMain.on({
