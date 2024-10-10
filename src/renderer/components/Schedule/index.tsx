@@ -37,6 +37,11 @@ const ScheduleView: React.FC<{
   }, [schedule])
 
   useEffect(() => {
+    // Move the selection caret to the end of the schedule text area when component loads
+    if (scheduleInput.current) {
+      scheduleInput.current.focus();
+      scheduleInput.current.setSelectionRange(scheduleInput.current.value.length, scheduleInput.current.value.length);
+    }
     return () => {
       ipcRenderer.send({ channel: IpcMessage.SaveSchedule, param: scheduleRef.current })
     }
