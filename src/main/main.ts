@@ -393,7 +393,6 @@ const registerShortcuts = () => {
 app
   .whenReady()
   .then(() => {
-    console.log('creating!')
     createWindows()
     createTray()
     app.on('activate', () => {
@@ -401,7 +400,6 @@ app
     })
   })
   .then(() => {
-    console.log('registering!')
     // Delay registering shortcuts
     setTimeout(registerShortcuts, 1000)
   })
