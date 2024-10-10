@@ -45,11 +45,16 @@ export const createTask = (
   let startTime: DateTime | undefined = maybeStartTime
   let endTime: DateTime | undefined = maybeEndTime
   const isComplete = () => status && status !== Status.Incomplete
-  const getUpdatedRaw = () =>
-    `${isComplete() ? `[${status}] ` : ''}${name}\t${duration}${startTime && endTime
+  const getUpdatedRaw = () => {
+    if (typeof duration === 'string') {
+      duration = parseFloat(duration)
+    }
+    const durationString = duration < 1 ? duration.toString().slice(1) : duration
+    return`${isComplete() ? `[${status}] ` : ''}${name}\t${durationString}${startTime && endTime
       ? `　${startTime.toFormat('HH:mm')}—${endTime.toFormat('HH:mm')}`
       : ''
     }`
+  }
   let raw = maybeRaw ? maybeRaw : getUpdatedRaw()
   return {
     raw,

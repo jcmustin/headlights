@@ -80,14 +80,16 @@ export const createAppState = (rawSchedule?: string): AppState => {
         schedule.insertBeforeActive(cachedActiveTask)
         cachedActiveTask.endTime = DateTime.now()
         if (cachedActiveTask.startTime) {
-          cachedActiveTask.duration = Math.round(cachedActiveTask.endTime.diff(cachedActiveTask.startTime, 'minutes').minutes)
+          const duration = cachedActiveTask.endTime.diff(cachedActiveTask.startTime, 'minutes').minutes
+          cachedActiveTask.duration = duration < 1 ? Math.round(10 * duration) / 10 : Math.round(duration);
         }
         cachedActiveTask.status = status
       }
       else {
         currentActiveTask.endTime = DateTime.now()
         if (currentActiveTask.startTime) {
-          currentActiveTask.duration = Math.round(currentActiveTask.endTime.diff(currentActiveTask.startTime, 'minutes').minutes)
+          const duration = currentActiveTask.endTime.diff(currentActiveTask.startTime, 'minutes').minutes 
+          currentActiveTask.duration = duration < 1 ? Math.round(10 * duration) / 10 : Math.round(duration);
         }
         currentActiveTask.status = status
       }
