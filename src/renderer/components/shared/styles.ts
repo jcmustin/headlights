@@ -1,9 +1,6 @@
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
-import { darken, opacify } from 'polished'
-import { PRIMARY_COLOR } from '../../../constants/constants'
-import milkyWay from '../../../../assets/milky-way.jpg'
-import day from '../../../../assets/day.png'
+import day from '../../../../assets/green-floral.jpg'
 
 const fadeInKeyframes = keyframes`
   0% {
@@ -31,14 +28,12 @@ export const TaskViewContainer = styled.div<{ fadeInDuration?: number }>`
   height: 100%;
   padding: 5rem;
   @media (prefers-color-scheme: light) {
-    background-image: url(${day});
+    background: linear-gradient(to bottom, #0bcd 0%, #0bcd 100%), url(${day});
+    background-size: 30%;
   }
   @media (prefers-color-scheme: dark) {
-    background-image: linear-gradient(
-        ${opacify(-0.55, darken(0.15, '#761240'))},
-        ${opacify(-0.15, '#761240')}
-      ),
-      url(${milkyWay});
+    background: linear-gradient(to bottom, #301e 0%, #301e 100%), url(${day});
+    background-size: 30%;
   }
   background-blend-mode: normal, normal;
   background-size: cover;
