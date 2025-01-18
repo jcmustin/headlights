@@ -5,25 +5,26 @@ import { darken, lighten, opacify, mix } from 'polished'
 export const COOLDOWN_DURATION = 10
 export const TICKS_PER_SECOND = 10
 export const FADE_IN_DURATION = 1
-// the following was needed to prevent the css animation from being too short, for unknown reasons
-export const CSS_ANIMATION_CORRECTION_FACTOR = 1
 
 /** styles */
 // dark mode: const BASE_COLOR = '#541130' //'#761240'
 const BASE_COLOR = '#ff0049' //'#761240'
 export const PRIMARY_COLOR = BASE_COLOR
 export const SECONDARY_COLOR = '#fb0'
-export const UI_COLOR = '#fff' //lighten(0.55, PRIMARY_COLOR)
+export const UI_COLOR = '#fff'; // lighten(0.1, PRIMARY_COLOR)
 
 export const SHADOW_STYLE = '0 4px 3px #0003'
 export const FONT_STYLE = css`
   font-family: 'Roboto Slab', sans-serif;
   color: ${opacify(-0.1, UI_COLOR)};
-  -webkit-text-stroke: 1px ${lighten(0.25, UI_COLOR)};
+  -webkit-text-stroke: 1px ${lighten(0.05, UI_COLOR)};
   text-shadow: 0px 1.25px 0px ${opacify(-0.4, darken(0.1, UI_COLOR))},
     0px 2.5px 0px ${opacify(-0.4, darken(0.2, UI_COLOR))},
     ${SHADOW_STYLE};
   font-size: 1.5rem;
+  &::selection {
+    background: ${opacify(-0.9, darken(0.05, UI_COLOR))};
+  }
 `
 
 export const FADE_IN_KEYFRAMES = keyframes`

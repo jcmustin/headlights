@@ -4,7 +4,6 @@ import useInterval from '../../../utils/useInterval'
 import { Progress, TaskTitle } from './styles'
 import {
   COOLDOWN_DURATION,
-  CSS_ANIMATION_CORRECTION_FACTOR,
   TICKS_PER_SECOND,
 } from '../../../constants/constants'
 import { TaskViewContainer } from '../shared/styles'
@@ -47,7 +46,7 @@ const Timer = ({ durationInMinutes, name }: { durationInMinutes: number; name: s
       <TaskTitle>{name}</TaskTitle>
       {cooldownStart && (
         <TaskViewContainer
-          fadeInDuration={COOLDOWN_DURATION * CSS_ANIMATION_CORRECTION_FACTOR}
+          fadeInDuration={COOLDOWN_DURATION}
         />
       )}
     </>

@@ -1,6 +1,6 @@
 import { css, keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
-import { darken, opacify } from 'polished'
+import { darken, lighten, opacify } from 'polished'
 import {
   FADE_IN_DURATION,
   FONT_STYLE,
@@ -37,10 +37,6 @@ const textAreaStyles = css`
   white-space: nowrap;
   background: transparent;
   resize: none;
-  &::selection {
-    background: #fff7;
-    color: ${UI_COLOR};
-  }
   ::-webkit-scrollbar {
     display: none;
   }
