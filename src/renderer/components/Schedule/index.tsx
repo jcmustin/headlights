@@ -95,7 +95,63 @@ const ScheduleView: React.FC<{
   }
 
   const onKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
-    if (event.key === 'Tab') {
+    if (event.key === 'ArrowDown' && event.altKey) {
+      console.log('DOWN')
+      event.preventDefault()
+      const { currentTarget: scheduleInput } = event
+      const lines = scheduleInput.value.split('\n')
+      const currentLineIndex = lines.findIndex((_, index, array) => 
+        array.slice(0, index + 1).join('\n').length >= scheduleInput.selectionStart
+      )
+      
+      if (currentLineIndex < lines.length - 1) {
+        // Swap lines
+        const temp = lines[currentLineIndex]
+        lines[currentLineIndex] = lines[currentLineIndex + 1]
+        lines[currentLineIndex + 1] = temp
+
+        // Calculate new cursor position
+        const prevLinesLength = lines.slice(0, currentLineIndex + 1).join('\n').length
+        const newValue = lines.join('\n')
+        
+        setLocalSchedule(newValue)
+        scheduleInput.value = newValue
+        
+        // Position cursor at same offset in moved line
+        const oldLineStart = scheduleInput.value.split('\n').slice(0, currentLineIndex).join('\n').length + (currentLineIndex > 0 ? 1 : 0)
+        const cursorOffset = scheduleInput.selectionStart - oldLineStart
+        scheduleInput.selectionStart = scheduleInput.selectionEnd = prevLinesLength + cursorOffset
+      }
+    }
+    else if (event.key === 'ArrowUp' && event.altKey) {
+      console.log('UP')
+      event.preventDefault()
+      const { currentTarget: scheduleInput } = event
+      const lines = scheduleInput.value.split('\n')
+      const currentLineIndex = lines.findIndex((_, index, array) => 
+        array.slice(0, index + 1).join('\n').length >= scheduleInput.selectionStart
+      )
+      
+      if (currentLineIndex > 0) {
+        // Swap lines
+        const temp = lines[currentLineIndex]
+        lines[currentLineIndex] = lines[currentLineIndex - 1]
+        lines[currentLineIndex - 1] = temp
+
+        // Calculate new cursor position
+        const prevLinesLength = lines.slice(0, currentLineIndex - 1).join('\n').length
+        const newValue = lines.join('\n')
+        
+        setLocalSchedule(newValue)
+        scheduleInput.value = newValue
+        
+        // Position cursor at same offset in moved line
+        const oldLineStart = scheduleInput.value.split('\n').slice(0, currentLineIndex).join('\n').length + (currentLineIndex > 0 ? 1 : 0)
+        const cursorOffset = scheduleInput.selectionStart - oldLineStart
+        scheduleInput.selectionStart = scheduleInput.selectionEnd = prevLinesLength + cursorOffset
+      }
+    }
+    else if (event.key === 'Tab') {
       event.preventDefault()
       const { currentTarget: scheduleInput } = event
       const start = scheduleInput.selectionStart
